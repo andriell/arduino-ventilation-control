@@ -15,9 +15,9 @@ void controlSetup() {
   pinMode(J_Y_PIN, INPUT);
 }
 
-void controlLoop(byte t) {
+void controlLoop() {
   int s;
-  for (byte i = 0; i < t; i++) {
+  for (byte i = 0; i < 5; i++) {
     if (i > 0) {
       delay(100);
     }

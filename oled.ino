@@ -9,6 +9,7 @@ byte oledFSPrev = 255;
 
 void oledSetap() {
   oledVar.begin();
+  oledVar.setCoding(TXT_UTF8);
   oledClean();
   oledPrint("OLED", 40, 40, 1);
 }
