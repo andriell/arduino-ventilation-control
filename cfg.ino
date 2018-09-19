@@ -26,7 +26,7 @@ void cfgSetup() {
     Serial.println(cfgAddr2I[i]);
   }
 }
-bool cfgMenuShow = false;
+bool cfgMenuShow = true;
 byte cfgMenuI = 0;
 bool cfgMenuEnter = false;
 
