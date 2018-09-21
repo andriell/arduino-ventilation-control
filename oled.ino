@@ -56,5 +56,7 @@ void oledPrintFloat(float txt, int x, int y, byte fs) {
   oledFont(fs);
   oledVar.print(txt, x, y);
 }
-
+void oledInvText(bool inv) {
+  oledVar.invText(inv);
+}
 

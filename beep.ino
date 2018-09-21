@@ -1,4 +1,4 @@
-const int BUZZER_PIN = 3;
+const int BUZZER_PIN = 10;
 
 void beepSetup() {
   pinMode(BUZZER_PIN, OUTPUT);

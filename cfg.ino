@@ -8,8 +8,8 @@ struct CfgMenuStruct {
 };
 const byte CFG_MENU_ELEMENTS_SIZE = 4;
 CfgMenuStruct cfgMenuElements[] = {
-  {0, "Min T (C\370)", 0, 250, 10, 1},
-  {1, "Max T (C\370)", 0, 250, 10, 1},
+  {0, "Min T (C\370)", 0, 25, 1, 1},
+  {1, "Max T (C\370)", 0, 25, 1, 1},
   {2, "Min H (%)", 0, 100, 1, 1},
   {3, "Max H (%)", 0, 100, 1, 1},
 };
@@ -20,7 +20,7 @@ void cfgSetup() {
   for (byte i = 0; i < CFG_MENU_ELEMENTS_SIZE; i++) {
     cfgAddr2I[cfgMenuElements[i].vAddr] = i;
   }
-  for (byte i = 0; i < 20; i++) {
+  for (byte i = 0; i < CFG_MENU_ELEMENTS_SIZE; i++) {
     Serial.print(i);
     Serial.print(" ");
     Serial.println(cfgAddr2I[i]);
@@ -34,27 +34,29 @@ void cfgLoop() {
   if (!cfgMenuShow) {
     return;
   }
+  oledPrint("Settings", OLED_C, 0, 0);
   CfgMenuStruct current = cfgMenuElements[cfgMenuI];
   int valInt = cfgRead(current.vAddr);
   float val = ((float) valInt) / current.vDivider;
   if (cfgMenuEnter) {
-    oledPrint(">", 20, 30, 1);
+    oledInvText(true);
   }
-  oledPrintFloat(val, 28, 30, 1);
+  oledPrintFloat(val, 28, 3, 1);
+  oledInvText(false);
 
-  oledPrintNl(current.vName, 40);
+  oledPrintNl(current.vName, 5);
 
   // Контроль
   if (controlE()) {
+    oledClean();
     cfgMenuEnter = true;
   }
   if (controlC()) {
-    if (!cfgMenuEnter) {
-      
-    }
+    oledClean();
     cfgMenuEnter = false;
   }
   if (controlP()) {
+    oledClean();
     if (cfgMenuEnter) {
       cfgWrite(current.vAddr, valInt + current.vStep);
     } else {
@@ -65,6 +67,7 @@ void cfgLoop() {
     }
   }
   if (controlM()) {
+    oledClean();
     if (cfgMenuEnter) {
       cfgWrite(current.vAddr, valInt - current.vStep);
     } else {
@@ -96,10 +99,10 @@ float cfgReadFloat(byte addr) {
 // запись
 void cfgWrite(byte addr, int val) {
   if (val < cfgMenuElements[cfgAddr2I[addr]].vMin) {
-    val = cfgMenuElements[cfgAddr2I[addr]].vMin;
+    val = cfgMenuElements[cfgAddr2I[addr]].vMax;
   }
   if (val > cfgMenuElements[cfgAddr2I[addr]].vMax) {
-    val = cfgMenuElements[cfgAddr2I[addr]].vMax;
+    val = cfgMenuElements[cfgAddr2I[addr]].vMin;
   }
   EEPROM.put(addr * 2, val);
 }

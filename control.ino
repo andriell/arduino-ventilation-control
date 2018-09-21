@@ -1,8 +1,5 @@
-const int J_X_PIN = A1;
-const int J_Y_PIN = A0;
-
 // -- Начало Джойстик
-unsigned int controlButtons = 0;
+byte controlButtons = 0;
 // -- Конец Джойстик
 
 // 10 - вверх +
@@ -11,56 +8,58 @@ unsigned int controlButtons = 0;
 // 13 - влево Cancel
 
 void controlSetup() {
-  pinMode(J_X_PIN, INPUT);
-  pinMode(J_Y_PIN, INPUT);
+  pinMode(A0, INPUT_PULLUP);
+  pinMode(A1, INPUT_PULLUP);
+  pinMode(A2, INPUT_PULLUP);
+  pinMode(A3, INPUT_PULLUP);
 }
 
 void controlLoop() {
-  int s;
+  controlButtons = 0;
   for (byte i = 0; i < 5; i++) {
     if (i > 0) {
       delay(100);
     }
-    s = analogRead(J_X_PIN);
-    if (s < 256) {
-      bitSet(controlButtons, 12);
-      beep(100);
-      break;
-    } else if (s > 768) {
-      bitSet(controlButtons, 10);
-      beep(120);
+    if (!digitalRead(A0)) {
+      bitSet(controlButtons, 0);
+      beep(200);
       break;
     }
-    s = analogRead(J_Y_PIN);
-    if (s < 256) {
-      bitSet(controlButtons, 13);
-      beep(140);
+    if (!digitalRead(A1)) {
+      bitSet(controlButtons, 1);
+      beep(400);
       break;
-    } else if (s > 768) {
-      bitSet(controlButtons, 11);
-      beep(160);
+    }
+    if (!digitalRead(A2)) {
+      bitSet(controlButtons, 2);
+      beep(600);
+      break;
+    }
+    if (!digitalRead(A3)) {
+      bitSet(controlButtons, 3);
+      beep(800);
       break;
     }
   }
+  if (controlButtons != 0) {
+    delay(200);
+  }
 }
 
-bool controlRead(int i) {
-  return bitRead(controlButtons, i);
-}
-// вверх +
+// +
 bool controlP() {
-  return bitRead(controlButtons, 10);
+  return bitRead(controlButtons, 0);
 }
-// вниз - 
+// - 
 bool controlM() {
-  return bitRead(controlButtons, 12);
+  return bitRead(controlButtons, 1);
 }
-// вправо Enter
+// Enter
 bool controlE() {
-  return bitRead(controlButtons, 11);
+  return bitRead(controlButtons, 2);
 }
-// влево Cancel
+// Cancel
 bool controlC() {
-  return bitRead(controlButtons, 13);
+  return bitRead(controlButtons, 3);
 }
 
