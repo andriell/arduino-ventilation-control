@@ -19,6 +19,8 @@ Arduino nano
 	D2 - Fan1 Hz
 	D3 - Fan2 Hz
 	D4 - DHT22 1
+	D5 - Fan 1
+	D6 - Fan 1 
 	D7 - DHT22 2
 	D8 - DHT22 3
 	D9 - LED
