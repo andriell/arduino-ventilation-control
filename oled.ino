@@ -35,13 +35,6 @@ void oledPrint(String txt, int x, int y, byte fs) {
   oledVar.print(txt, x, y);
 }
 
-byte oledPrintNl(String txt, int y) {
-  unsigned int len = txt.length();
-  for (int i = 0; i <= len % 21; i++) {
-    oledPrint(txt.substring(i * 21, min((i + 1) * 21, len)), 1, y + i * 10, 0);
-  }
-}
-
 void oledPrintByte(byte txt, int x, int y, byte fs) {
   oledFont(fs);
   oledVar.print(txt, x, y);

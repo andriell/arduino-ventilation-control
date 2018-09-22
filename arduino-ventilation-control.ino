@@ -9,12 +9,11 @@ void setup() {
   beepSetup();
   controlSetup();
   oledSetap();
-  clockSetup();
+  rtcSetup();
   oledClean();
 }
 
 void loop() {
   controlLoop();
-  cfgLoop();
-  //clockLoop();
+  menuLoop();
 }

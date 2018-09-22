@@ -46,6 +46,9 @@ void controlLoop() {
   }
 }
 
+void controlReset() {
+  controlButtons = 0;
+}
 // +
 bool controlP() {
   return bitRead(controlButtons, 0);
