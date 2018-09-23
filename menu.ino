@@ -16,8 +16,6 @@ char* menuList[] = {
 
 
 void menuMenu() {
-  oledPrint("\214\245\255\356", OLED_C, 0, 0);
-
   byte prev, next;
   if (menuSelected <= 0) {
     prev = MENU_SIZE - 1;
@@ -30,7 +28,7 @@ void menuMenu() {
     next = menuSelected + 1;
   }
 
-  oledPrint(menuList[prev], OLED_C, 1, 0);
+  oledPrint(menuList[prev], OLED_C, 0, 0);
   oledPrint(menuList[menuSelected], OLED_C, 3, 1);
   oledPrint(menuList[next], OLED_C, 5, 0);
 
