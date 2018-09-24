@@ -10,16 +10,7 @@ byte oledFSPrev = 255;
 
 void oledSetap() {
   oledVar.begin();
-
-  Wire.beginTransmission(OLED_ADDRESS);
-  Wire.write(0x80);
-  Wire.write(0xC8);
-  Wire.endTransmission();
-  Wire.beginTransmission(OLED_ADDRESS);
-  Wire.write(0x80);
-  Wire.write(0xA1);
-  Wire.endTransmission();
-
+  oledFlipDisplay();
   oledVar.setCoding(false);
   oledClean();
   oledPrint("OLED", OLED_C, 4, 1);
@@ -62,5 +53,30 @@ void oledPrintFloat(float txt, int x, int y, byte fs) {
 }
 void oledInvText(bool inv) {
   oledVar.invText(inv);
+}
+
+
+void oledNormalDisplay()   {
+  Wire.beginTransmission(OLED_ADDRESS);
+  Wire.write(0x80);
+  Wire.write(0xC8);
+  Wire.endTransmission();
+
+  Wire.beginTransmission(OLED_ADDRESS);
+  Wire.write(0x80);
+  Wire.write(0xA1);
+  Wire.endTransmission();
+}
+
+void oledFlipDisplay() {
+  Wire.beginTransmission(OLED_ADDRESS);
+  Wire.write(0x80);
+  Wire.write(0xC0);
+  Wire.endTransmission();
+
+  Wire.beginTransmission(OLED_ADDRESS);
+  Wire.write(0x80);
+  Wire.write(0xA0);
+  Wire.endTransmission();
 }
 
