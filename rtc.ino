@@ -1,6 +1,7 @@
 RTC_DS1307 rtcVar;
 byte rtcInsertI = 0;
-char rtcChar22[22];
+unsigned long rtcLastNowMicros = 0;
+DateTime rtcLastNow;
 
 void rtcSetup() {
   rtcVar.begin();
@@ -8,7 +9,7 @@ void rtcSetup() {
 
 void rtcMenu() {
   menuTitile();
-  DateTime now = rtcVar.now();
+  DateTime now = rtcNow();
 
   if (rtcInsertI == 1) {
     oledInvText(true);
@@ -53,7 +54,7 @@ void rtcMenu() {
   if (rtcInsertI == 7) {
     oledInvText(true);
   }
-  oledPrint(rtcW(), 48, 6, 1);
+  oledPrint(rtcWStr(), 48, 6, 1);
   oledInvText(false);
 
   // Контроль
@@ -89,7 +90,7 @@ void rtcMenu() {
 
 void rtcSet(byte i, int val) {
   // settime(секунды [, минуты [, часы [, день [, месяц [, год [, день недели]]]]]])
-  DateTime now = rtcVar.now();
+  DateTime now = rtcNow();
   if (i == 6) {
     // Секунды
     if (val < 0) {
@@ -135,20 +136,11 @@ void rtcSet(byte i, int val) {
     // год указывается без учёта века, в формате 0-99
     val = constrain(val, 2018, 2099);
     rtcVar.adjust(DateTime(val, now.month(), now.day(), now.hour(), now.minute(), now.second()));
-  } else if (i == 7) {
-    // День недели
-    if (val < 0) {
-      val = 6;
-    } else if (val > 6) {
-      val = 0;
-    }
-    //rtcVar.adjust(DateTime(now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second()));
-    //rtcVar.settime(-1, -1, -1, -1, -1, -1, val);
   }
 }
 
 int rtcGet(byte i) {
-  DateTime now = rtcVar.now();
+  DateTime now = rtcNow();
   if (i == 6) {
     return now.second();
   } else if (i == 5) {
@@ -167,9 +159,10 @@ int rtcGet(byte i) {
   return -1;
 }
 
-String rtcW() {
+// День недели 2 символа
+String rtcWStr() {
   // 0-воскресенье до 6-суббота
-  DateTime now = rtcVar.now();
+  DateTime now = rtcNow();
   int w = now.dayOfTheWeek();
   if (w == 0) {
     return String("\202\341");
@@ -189,16 +182,25 @@ String rtcW() {
   return String("");
 }
 
+// 2 символа
 String rtc02d(int i) {
-  sprintf(rtcChar22, "%02d", i);
-  rtcChar22[2] = '\0';
-  return rtcChar22;
+  sprintf(char22, "%02d", i);
+  char22[2] = '\0';
+  return char22;
 }
 
+DateTime rtcNow() {
+  if (micros() - rtcLastNowMicros > ONE_SECOND) {
+    rtcLastNow = rtcVar.now();
+  }
+  return rtcLastNow;
+}
+
+// Полная дата. 19 символов
 String rtcStr() {
-  DateTime now = rtcVar.now();
-  sprintf(rtcChar22, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
-  rtcChar22[19] = '\0';
-  return rtcChar22;
+  DateTime now = rtcNow();
+  sprintf(char22, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+  char22[19] = '\0';
+  return char22;
 }
 

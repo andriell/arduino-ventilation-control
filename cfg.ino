@@ -175,10 +175,10 @@ int cfgGetRun16() {
 int cfgGetRun20() {
   return cfgRead(13);
 }
-int cfgGetSpeedFan1() {
+int cfgGetSpeedFan0() {
   return cfgRead(14);
 }
-int cfgGetSpeedFan2() {
+int cfgGetSpeedFan1() {
   return cfgRead(15);
 }
 
