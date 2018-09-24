@@ -1,5 +1,5 @@
-
-iarduino_OLED_txt oledVar(0x3C);
+#define OLED_ADDRESS 0x3C
+iarduino_OLED_txt oledVar(OLED_ADDRESS);
 
 // ширина символов (6), высота символов (8),
 extern uint8_t SmallFontRus[];
@@ -10,7 +10,7 @@ byte oledFSPrev = 255;
 
 void oledSetap() {
   oledVar.begin();
-  //oledFlipDisplay();
+  oledFlipDisplay();
   oledVar.setCoding(false);
   oledClean();
   oledPrint("OLED\0", OLED_C, 4, 1);
@@ -56,8 +56,8 @@ void oledInvText(bool inv) {
 }
 
 
-/*void oledNormalDisplay()   {
-  Wire.beginTransmission(OLED_ADDRESS);
+void oledNormalDisplay()   {
+  /*Wire.beginTransmission(OLED_ADDRESS);
   Wire.write(0x80);
   Wire.write(0xC8);
   Wire.endTransmission();
@@ -65,11 +65,14 @@ void oledInvText(bool inv) {
   Wire.beginTransmission(OLED_ADDRESS);
   Wire.write(0x80);
   Wire.write(0xA1);
-  Wire.endTransmission();
+  Wire.endTransmission();*/
+  // Библиотека iarduino_OLED_txt не дружит с Wire поэтому в файле iarduino_OLED_txt.h метод _sendCommand нужно сделать публичным
+  oledVar._sendCommand(0xC8);
+  oledVar._sendCommand(0xA1);
 }
 
 void oledFlipDisplay() {
-  Wire.beginTransmission(OLED_ADDRESS);
+  /*Wire.beginTransmission(OLED_ADDRESS);
   Wire.write(0x80);
   Wire.write(0xC0);
   Wire.endTransmission();
@@ -77,6 +80,9 @@ void oledFlipDisplay() {
   Wire.beginTransmission(OLED_ADDRESS);
   Wire.write(0x80);
   Wire.write(0xA0);
-  Wire.endTransmission();
-}*/
+  Wire.endTransmission();*/
+  // Библиотека iarduino_OLED_txt не дружит с Wire поэтому в файле iarduino_OLED_txt.h метод _sendCommand нужно сделать публичным
+  oledVar._sendCommand(0xC0);
+  oledVar._sendCommand(0xA0);
+}
 
