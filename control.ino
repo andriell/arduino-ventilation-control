@@ -59,10 +59,10 @@ bool controlM() {
 }
 // Enter
 bool controlE() {
-  return bitRead(controlButtons, 2);
+  return bitRead(controlButtons, 3);
 }
 // Cancel
 bool controlC() {
-  return bitRead(controlButtons, 3);
+  return bitRead(controlButtons, 2);
 }
 

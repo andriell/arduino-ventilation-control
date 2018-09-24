@@ -15,7 +15,7 @@ void dhtSetup() {
 // Температура. 7 символов
 char* dhtTStr(float val) {
   val = constrain(val, -99, 99);
-  sprintf(char22, "%+5d.%dC\370\0", (int) val, ((int) (val * 10)) % 10);
+  sprintf(char22, "%+5d.%d\370C\0", (int) val, ((int) (val * 10)) % 10);
   char22[7] = '\0';
   return char22;
 }
@@ -23,7 +23,7 @@ char* dhtTStr(float val) {
 // Влажность. 3 символа
 char* dhtHStr(float val) {
   val = constrain(val, 0, 99);
-  sprintf(char22, "%2d%\0", (int) round(val));
+  sprintf(char22, "%2d%%\0", (int) round(val));
   char22[3] = '\0';
   return char22;
 }

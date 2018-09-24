@@ -38,9 +38,14 @@ void funRun(byte fan, int sec) {
     funList[fan].stopMicros = micros();
   }
   funList[fan].stopMicros += ((unsigned long) sec) * ONE_SECOND;
+  if (funList[fan].stopMicros - micros() > 3599ul * ONE_SECOND) {
+    funList[fan].stopMicros = micros() + 3599ul * ONE_SECOND;
+  }
   if (funList[fan].lastWorkDay != funDayId()) {
+    funList[fan].lastWorkDay = funDayId();
     funList[fan].lastWorkDaySec = 0;
   }
+  // fix
   funList[fan].lastWorkDaySec += sec;
   if (fan == 0) {
     analogWrite(funList[fan].pin, cfgGetSpeedFan0());
@@ -69,11 +74,10 @@ int funRpm(byte fan) {
 
 // Сколько секунд еще работать
 int funSec(byte fan) {
-  int r = (funList[fan].stopMicros - micros()) / ONE_SECOND;
-  if (r < 0) {
+  if (micros() > funList[fan].stopMicros + ONE_SECOND) {
     return 0;
   }
-  return r;
+  return (funList[fan].stopMicros - micros()) / ONE_SECOND;
 }
 
 // Скорость вращения вентилятора. 8 символов
@@ -83,11 +87,11 @@ char* funRpmStr(byte fan) {
   return char22;
 }
 
-// Сколько вентилятору еще работать. 8 символов
+// Сколько вентилятору еще работать. 5 символов
 char* funSecStr(byte fan) {
   int val = funSec(fan);
-  sprintf(char22, "%02d:%02d:%02d\0", val / 3600, (val % 3600) / 60, val % 60);
-  char22[8] = '\0';
+  sprintf(char22, "%02d:%02d\0", val / 60, val % 60);
+  char22[5] = '\0';
   return char22;
 }
 

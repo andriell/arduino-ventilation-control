@@ -36,17 +36,17 @@ void menuMenu() {
   }
   if (controlP()) {
     oledClean();
-    menuSelected++;
-    if (menuSelected >= MENU_SIZE) {
-      menuSelected = 0;
-    }
-  }
-  if (controlM()) {
-    oledClean();
     if (menuSelected <= 0) {
       menuSelected = MENU_SIZE;
     }
     menuSelected--;
+  }
+  if (controlM()) {
+    oledClean();
+    menuSelected++;
+    if (menuSelected >= MENU_SIZE) {
+      menuSelected = 0;
+    }
   }
 }
 
