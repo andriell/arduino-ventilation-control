@@ -1,7 +1,6 @@
 RTC_DS1307 rtcVar;
 byte rtcInsertI = 0;
-char rtcChar3[3];
-char rtcChar19[19];
+char rtcChar22[22];
 
 void rtcSetup() {
   rtcVar.begin();
@@ -172,44 +171,34 @@ String rtcW() {
   // 0-воскресенье до 6-суббота
   DateTime now = rtcVar.now();
   int w = now.dayOfTheWeek();
-  switch (w) {
-    case 0:
-      return String("\202\341");
-      break;
-    case 1:
-      return String("\217\255");
-      break;
-    case 2:
-      return String("\202\342");
-      break;
-    case 3:
-      return String("\221\340");
-      break;
-    case 4:
-      return String("\227\342");
-      break;
-    case 5:
-      return String("\217\342");
-      break;
-    case 6:
-      return String("\221\241");
-      break;
-    default:
-      return String("");
+  if (w == 0) {
+    return String("\202\341");
+  } else if (w == 1) {
+    return String("\217\255");
+  } else if (w == 2) {
+    return String("\202\342");
+  } else if (w == 3) {
+    return String("\221\340");
+  } else if (w == 4) {
+    return String("\227\342");
+  } else if (w == 5) {
+    return String("\217\342");
+  } else if (w == 6) {
+    return String("\221\241");
   }
   return String("");
 }
 
 String rtc02d(int i) {
-  sprintf(rtcChar3, "%02d", i);
-  rtcChar3[3] = '\0';
-  return rtcChar3;
+  sprintf(rtcChar22, "%02d", i);
+  rtcChar22[2] = '\0';
+  return rtcChar22;
 }
 
 String rtcStr() {
   DateTime now = rtcVar.now();
-  sprintf(rtcChar19, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
-  rtcChar19[19] = '\0';
-  return rtcChar19;
+  sprintf(rtcChar22, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+  rtcChar22[19] = '\0';
+  return rtcChar22;
 }
 
