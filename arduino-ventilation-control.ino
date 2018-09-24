@@ -1,4 +1,3 @@
-#include <Wire.h>
 #include <EEPROM.h>
 #include <iarduino_OLED_txt.h>
 #include "DHT.h"

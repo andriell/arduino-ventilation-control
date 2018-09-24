@@ -1,4 +1,3 @@
-const byte MENU_TOP = 14;
 const byte MENU_SIZE = 4;
 
 byte menuSelected = 0;
@@ -8,10 +7,10 @@ byte menuActive = 255;
 
 
 char* menuList[] = {
-  "\214\256\255\250\342\256\340\250\255\243",
-  "\215\240\341\342\340\256\251\252\250",
-  "\204\240\342\240/\242\340\245\254\357",
-  "\216\342\347\245\342",
+  "\214\256\255\250\342\256\340\250\255\243\0",
+  "\215\240\341\342\340\256\251\252\250\0",
+  "\204\240\342\240/\242\340\245\254\357\0",
+  "\216\342\347\245\342\0",
 };
 
 
@@ -27,7 +26,6 @@ void menuMenu() {
     prev = menuSelected - 1;
     next = menuSelected + 1;
   }
-
   oledPrint(menuList[prev], OLED_C, 0, 0);
   oledPrint(menuList[menuSelected], OLED_C, 3, 1);
   oledPrint(menuList[next], OLED_C, 5, 0);

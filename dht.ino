@@ -13,26 +13,26 @@ void dhtSetup() {
 }
 
 // Температура. 7 символов
-String dhtTStr(float val) {
+char* dhtTStr(float val) {
   val = constrain(val, -99, 99);
-  sprintf(char22, "%+5d.%dC\370", (int) val, ((int) (val * 10)) % 10);
+  sprintf(char22, "%+5d.%dC\370\0", (int) val, ((int) (val * 10)) % 10);
   char22[7] = '\0';
   return char22;
 }
 
 // Влажность. 3 символа
-String dhtHStr(float val) {
+char* dhtHStr(float val) {
   val = constrain(val, 0, 99);
-  sprintf(char22, "%2d%", (int) round(val));
+  sprintf(char22, "%2d%\0", (int) round(val));
   char22[3] = '\0';
   return char22;
 }
 
 // Абсолютная влажность. 6 символов
-String dhtHAStr(float t, float h) {
+char* dhtHAStr(float t, float h) {
   float val = dhtHA(t, h);
   val = constrain(val, 0, 99);
-  sprintf(char22, "%2d.%dg", (int) val, ((int) (val * 100)) % 100);
+  sprintf(char22, "%2d.%dg\0", (int) val, ((int) (val * 100)) % 100);
   char22[6] = '\0';
   return char22;
 }

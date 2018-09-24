@@ -16,14 +16,14 @@ void rtcMenu() {
   }
   oledPrintInt(now.year(), 0, 2, 1);
   oledInvText(false);
-  oledPrint("-", 48, 2, 1);
+  oledPrint("-\0", 48, 2, 1);
 
   if (rtcInsertI == 2) {
     oledInvText(true);
   }
   oledPrint(rtc02d(now.month()), 60, 2, 1);
   oledInvText(false);
-  oledPrint("-", 84, 2, 1);
+  oledPrint("-\0", 84, 2, 1);
 
   if (rtcInsertI == 3) {
     oledInvText(true);
@@ -36,14 +36,14 @@ void rtcMenu() {
   }
   oledPrint(rtc02d(now.hour()), 12, 4, 1);
   oledInvText(false);
-  oledPrint(":", 36, 4, 1);
+  oledPrint(":\0", 36, 4, 1);
 
   if (rtcInsertI == 5) {
     oledInvText(true);
   }
   oledPrint(rtc02d(now.minute()), 48, 4, 1);
   oledInvText(false);
-  oledPrint(":", 72, 4, 1);
+  oledPrint(":\0", 72, 4, 1);
 
   if (rtcInsertI == 6) {
     oledInvText(true);
@@ -160,31 +160,31 @@ int rtcGet(byte i) {
 }
 
 // День недели 2 символа
-String rtcWStr() {
+char* rtcWStr() {
   // 0-воскресенье до 6-суббота
   DateTime now = rtcNow();
   int w = now.dayOfTheWeek();
   if (w == 0) {
-    return String("\202\341");
+    return "\202\341\0";
   } else if (w == 1) {
-    return String("\217\255");
+    return "\217\255\0";
   } else if (w == 2) {
-    return String("\202\342");
+    return "\202\342\0";
   } else if (w == 3) {
-    return String("\221\340");
+    return "\221\340\0";
   } else if (w == 4) {
-    return String("\227\342");
+    return "\227\342\0";
   } else if (w == 5) {
-    return String("\217\342");
+    return "\217\342\0";
   } else if (w == 6) {
-    return String("\221\241");
+    return "\221\241\0";
   }
-  return String("");
+  return "\0";
 }
 
 // 2 символа
-String rtc02d(int i) {
-  sprintf(char22, "%02d", i);
+char* rtc02d(int i) {
+  sprintf(char22, "%02d\0", i);
   char22[2] = '\0';
   return char22;
 }
@@ -197,9 +197,9 @@ DateTime rtcNow() {
 }
 
 // Полная дата. 19 символов
-String rtcStr() {
+char* rtcStr() {
   DateTime now = rtcNow();
-  sprintf(char22, "%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+  sprintf(char22, "%04d-%02d-%02d %02d:%02d:%02d\0", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
   char22[19] = '\0';
   return char22;
 }

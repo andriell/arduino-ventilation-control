@@ -13,7 +13,7 @@ void infoMenu() {
     oledPrint(dhtHAStr(t, h), b + 1, 6 * 14, 0);
   }
   for (byte b = 0; b < 2; b++) {
-    oledPrint("F", 5 + b, 0, 0);
+    oledPrint("F\0", 5 + b, 0, 0);
     oledPrintByte(b + 1, 5 + b, 6, 0);
     oledPrint(funSecStr(b), 5 + b, 6 * 3, 0);
     oledPrint(funRpmStr(b), 5 + b, 6 * 13, 0);

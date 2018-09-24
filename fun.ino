@@ -77,32 +77,32 @@ int funSec(byte fan) {
 }
 
 // Скорость вращения вентилятора. 8 символов
-String funRpmStr(byte fan) {
-  sprintf(char22, "%5drpm", funList[fan].rpm);
+char* funRpmStr(byte fan) {
+  sprintf(char22, "%5drpm\0", funList[fan].rpm);
   char22[8] = '\0';
   return char22;
 }
 
 // Сколько вентилятору еще работать. 8 символов
-String funSecStr(byte fan) {
+char* funSecStr(byte fan) {
   int val = funSec(fan);
-  sprintf(char22, "%02d:%02d:%02d", val / 3600, (val % 3600) / 60, val % 60);
+  sprintf(char22, "%02d:%02d:%02d\0", val / 3600, (val % 3600) / 60, val % 60);
   char22[8] = '\0';
   return char22;
 }
 
 // Последний рабочий день. 10 символов
-String funLastWorkDayStr(byte fan) {
+char* funLastWorkDayStr(byte fan) {
   unsigned long val = funList[fan].lastWorkDay;
-  sprintf(char22, "%04d-%02d-%02d", val / 10000ul, (val % 10000ul) / 100, val % 100ul);
+  sprintf(char22, "%04d-%02d-%02d\0", val / 10000ul, (val % 10000ul) / 100, val % 100ul);
   char22[10] = '\0';
   return char22;
 }
 
 // Сколько времени кулер работал в этот день. 8 символов
-String funLastWorkDaySecStr(byte fan) {
+char* funLastWorkDaySecStr(byte fan) {
   unsigned long val = funList[fan].lastWorkDaySec;
-  sprintf(char22, "%02d:%02d:%02d", val / 3600, (val % 3600) / 60, val % 60);
+  sprintf(char22, "%02d:%02d:%02d\0", val / 3600, (val % 3600) / 60, val % 60);
   char22[8] = '\0';
   return char22;
 }
