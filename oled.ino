@@ -1,4 +1,5 @@
-iarduino_OLED_txt oledVar(0x3C);
+#define OLED_ADDRESS 0x3C
+iarduino_OLED_txt oledVar(OLED_ADDRESS);
 
 // ширина символов (6), высота символов (8),
 extern uint8_t SmallFontRus[];
@@ -9,6 +10,16 @@ byte oledFSPrev = 255;
 
 void oledSetap() {
   oledVar.begin();
+
+  Wire.beginTransmission(OLED_ADDRESS);
+  Wire.write(0x80);
+  Wire.write(0xC8);
+  Wire.endTransmission();
+  Wire.beginTransmission(OLED_ADDRESS);
+  Wire.write(0x80);
+  Wire.write(0xA1);
+  Wire.endTransmission();
+
   oledVar.setCoding(false);
   oledClean();
   oledPrint("OLED", OLED_C, 4, 1);
