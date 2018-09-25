@@ -3,11 +3,11 @@
 
 struct FanStruct {
   int pin;
-  unsigned long stopMicros;
+  unsigned long stopSec;
   unsigned long rpmMicros;
   int rpm;
   unsigned long lastWorkDay;
-  int lastWorkDaySec;
+  unsigned long lastWorkDaySec;
 };
 
 FanStruct funList[] = {
@@ -27,25 +27,25 @@ void fanLoop() {
     if ((micros() - funList[b].rpmMicros) > ONE_SECOND) {
       funList[b].rpm = 0;
     }
-    if (funList[b].stopMicros < micros()) {
+    if (funList[b].stopSec < micros() / ONE_SECOND) {
       analogWrite(funList[b].pin, 0);
     }
   }
 }
 
-void funRun(byte fan, int sec) {
-  if (funList[fan].stopMicros < micros()) {
-    funList[fan].stopMicros = micros();
+void funRun(byte fan, unsigned long sec) {
+  unsigned long m = micros() / ONE_SECOND;
+  if (funList[fan].stopSec < m) {
+    funList[fan].stopSec = m;
   }
-  funList[fan].stopMicros += ((unsigned long) sec) * ONE_SECOND;
-  if (funList[fan].stopMicros - micros() > 3599ul * ONE_SECOND) {
-    funList[fan].stopMicros = micros() + 3599ul * ONE_SECOND;
+  if (funList[fan].stopSec + sec - m > 3600ul) {
+    sec = 3600ul - (funList[fan].stopSec - m);
   }
+  funList[fan].stopSec += sec;
   if (funList[fan].lastWorkDay != funDayId()) {
     funList[fan].lastWorkDay = funDayId();
     funList[fan].lastWorkDaySec = 0;
   }
-  // fix
   funList[fan].lastWorkDaySec += sec;
   if (fan == 0) {
     analogWrite(funList[fan].pin, cfgGetSpeedFan0());
@@ -55,7 +55,11 @@ void funRun(byte fan, int sec) {
 }
 
 void funStop(byte fan) {
-  funList[fan].stopMicros = micros();
+  unsigned long m = micros() / ONE_SECOND;
+  if (funList[fan].stopSec > m) {
+    funList[fan].lastWorkDaySec -= (funList[fan].stopSec - m);
+    funList[fan].stopSec = m;
+  }
 }
 
 void fanSens1() {
@@ -74,10 +78,11 @@ int funRpm(byte fan) {
 
 // Сколько секунд еще работать
 int funSec(byte fan) {
-  if (micros() > funList[fan].stopMicros + ONE_SECOND) {
+  unsigned long sec = micros() / ONE_SECOND;
+  if (sec > funList[fan].stopSec) {
     return 0;
   }
-  return (funList[fan].stopMicros - micros()) / ONE_SECOND;
+  return funList[fan].stopSec - sec;
 }
 
 // Скорость вращения вентилятора. 8 символов
@@ -97,16 +102,20 @@ char* funSecStr(byte fan) {
 
 // Последний рабочий день. 10 символов
 char* funLastWorkDayStr(byte fan) {
-  unsigned long val = funList[fan].lastWorkDay;
-  sprintf(char22, "%04d-%02d-%02d\0", val / 10000ul, (val % 10000ul) / 100, val % 100ul);
+  int y = funList[fan].lastWorkDay / 10000ul;
+  int m = (funList[fan].lastWorkDay - y * 10000ul) / 100;
+  int d = funList[fan].lastWorkDay - y * 10000ul - m * 100;
+  sprintf(char22, "%04d-%02d-%02d\0", y, m, d);
   char22[10] = '\0';
   return char22;
 }
 
 // Сколько времени кулер работал в этот день. 8 символов
 char* funLastWorkDaySecStr(byte fan) {
-  unsigned long val = funList[fan].lastWorkDaySec;
-  sprintf(char22, "%02d:%02d:%02d\0", val / 3600, (val % 3600) / 60, val % 60);
+  int h = funList[fan].lastWorkDaySec / 3600;
+  int m = (funList[fan].lastWorkDaySec - h * 3600) / 60;
+  int s = funList[fan].lastWorkDaySec - h * 3600 - m * 60;
+  sprintf(char22, "%02d:%02d:%02d\0", h, m, s);
   char22[8] = '\0';
   return char22;
 }
