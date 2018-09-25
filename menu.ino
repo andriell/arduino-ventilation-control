@@ -28,7 +28,9 @@ void menuMenu() {
     next = menuSelected + 1;
   }
   oledPrint(menuList[prev], OLED_C, 0, 0);
-  oledPrint(menuList[menuSelected], OLED_C, 3, 1);
+  oledInvText(true);
+  oledPrint(menuList[menuSelected], OLED_C, 3, 0);
+  oledInvText(false);
   oledPrint(menuList[next], OLED_C, 5, 0);
 
   // Контроль

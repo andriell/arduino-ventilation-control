@@ -39,27 +39,27 @@ void rtcMenu() {
   if (rtcInsertI == 4) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.hour()), 12, 4, 1);
+  oledPrint(rtc02d(now.hour()), 0, 5, 1);
   oledInvText(false);
-  oledPrint(":\0", 36, 4, 1);
+  oledPrint(":\0", 24, 4, 1);
 
   if (rtcInsertI == 5) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.minute()), 48, 4, 1);
+  oledPrint(rtc02d(now.minute()), 36, 5, 1);
   oledInvText(false);
-  oledPrint(":\0", 72, 4, 1);
+  oledPrint(":\0", 60, 4, 1);
 
   if (rtcInsertI == 6) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.second()), 84, 4, 1);
+  oledPrint(rtc02d(now.second()), 72, 5, 1);
   oledInvText(false);
 
   if (rtcInsertI == 7) {
     oledInvText(true);
   }
-  oledPrint(rtcWStr(), 48, 6, 1);
+  oledPrint(rtcWStr(), 102, 5, 0);
   oledInvText(false);
 
   // Контроль

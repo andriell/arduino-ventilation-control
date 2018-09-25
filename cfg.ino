@@ -8,8 +8,8 @@ struct CfgMenuStruct {
   int vStep;
 };
 CfgMenuStruct cfgMenuElements[] = {
-  {0, "Min T (C"")\0", "\0", 0, 25, 1, 1},
-  {1, "Max T (C"")\0", "\0", 0, 25, 1, 1},
+  {0, "Min T (C\370)\0", "\0", 0, 25, 1, 1},
+  {1, "Max T (C\370)\0", "\0", 0, 25, 1, 1},
   {2, "Min H (%)\0", "\0", 0, 100, 1, 1},
   {3, "Max H (%)\0", "\0", 0, 100, 1, 1},
   {4, "\207\242\343\252\0", "\0", 0, 1, 1, 1},
@@ -60,9 +60,9 @@ void cfgMenu() {
   } else if (current.vMin == 0 && current.vMax == 1) {
     // bool
     if (valInt > 0) {
-      oledPrint("\204\240\0", OLED_C, 3, 1);
+      oledPrint("+\0", OLED_C, 3, 1);
     } else {
-      oledPrint("\215\245\342\0", OLED_C, 3, 1);
+      oledPrint("-\0", OLED_C, 3, 1);
     }
   } else if (current.vMin == 0 && (current.vMax == 3599 || current.vMax == 1439)) {
     // Часы и минуты или минуты и секунды

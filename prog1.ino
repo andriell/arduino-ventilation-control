@@ -76,12 +76,12 @@ void prog1Menu() {
   if (funIsRun(0)) {
     oledInvText(true);
   }
-  oledPrint("F1\0", 16 * 6, 5, 1);
+  oledPrint("F1\0", 16 * 6, 5, 0);
   oledInvText(false);
   if (funIsRun(1)) {
     oledInvText(true);
   }
-  oledPrint("F2\0", 19 * 6, 5, 1);
+  oledPrint("F2\0", 19 * 6, 5, 0);
   oledInvText(false);
 
   // Строка 6
@@ -181,9 +181,9 @@ float prog1ResultantT() {
 
 void prog1DisplyProcess() {
   if (funIsRunAll()) {
-    oledPrint(">>>\0", 9 * 6, 3, 1);
+    oledPrint(">>>\0", 9 * 6, 3, 0);
   } else {
-    oledPrint("|||\0", 9 * 6, 3, 1);
+    oledPrint("|||\0", 9 * 6, 3, 0);
   }
 }
 
