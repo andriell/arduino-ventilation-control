@@ -8,16 +8,19 @@ char char22[22];
 void setup() {
   Serial.begin(9600);
   cfgSetup();
+  rtcSetup();
   beepSetup();
   controlSetup();
   oledSetap();
-  rtcSetup();
+  delay(200);
   oledClean();
 }
 
 void loop() {
+  rtcLoop();
   controlLoop();
-  menuLoop();
+  dthLoop();
   fanLoop();
   prog1Loop();
+  menuLoop();
 }

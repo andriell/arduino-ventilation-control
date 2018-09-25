@@ -6,9 +6,19 @@ DHT dhtVar[] = {
   DHT(12, DHT22),
 };
 
+float dhtTVal[4] = {0, 0, 0, 0};
+float dhtHVal[4] = {0, 0, 0, 0};
+
 void dhtSetup() {
   for (byte b = 0; b < DHT_SIZE; b++) {
     dhtVar[b].begin();
+  }
+}
+
+void dthLoop() {
+  for (byte b = 0; b < DHT_SIZE; b++) {
+    dhtTVal[b] = dhtVar[b].readTemperature();
+    dhtHVal[b] = dhtVar[b].readHumidity();
   }
 }
 
@@ -37,12 +47,28 @@ char* dhtHAStr(float t, float h) {
   return char22;
 }
 
-float dhtH(byte b) {
-  dhtVar[b].readHumidity();
+float dhtT(byte b) {
+  return dhtTVal[b];
 }
 
-float dhtT(byte b) {
-  dhtVar[b].readTemperature();
+float dhtH(byte b) {
+  return dhtHVal[b];
+}
+
+float dhtTCellar() {
+  dhtTVal[0];
+}
+
+float dhtHCellar() {
+  dhtHVal[0];
+}
+
+float dhtTOutside() {
+  dhtT[1];
+}
+
+float dhtHOutside() {
+  dhtH[1];
 }
 
 float dhtHA(float t, float h) {

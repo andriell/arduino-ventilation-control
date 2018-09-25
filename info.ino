@@ -31,12 +31,10 @@ void infoMenu() {
 
   // Контроль
   if (controlP()) {
-    funRun(0, 60);
-    funRun(1, 60);
+    funRunAll(60);
   }
   if (controlM()) {
-    funStop(0);
-    funStop(1);
+    funStopAll();
   }
   if (controlC()) {
     menuOpen(255);

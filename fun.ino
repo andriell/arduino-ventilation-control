@@ -39,32 +39,43 @@ void fanLoop() {
   }
 }
 
-void funRun(byte fan, unsigned long sec) {
-  unsigned long m = rtcUnixtime();
-  if (funList[fan].stopSec < m) {
-    funList[fan].stopSec = m;
+void funRunAll(unsigned long stopUnixtime) {
+  funRun(0, stopUnixtime);
+  funRun(1, stopUnixtime);
+}
+
+void funRun(byte fan, unsigned long stopUnixtime) {
+  unsigned long ut = rtcUnixtime();
+  if (stopUnixtime - ut > 3600ul) {
+    stopUnixtime = ut + 3600ul;
   }
-  if (funList[fan].stopSec + sec - m > 3600ul) {
-    sec = 3600ul - (funList[fan].stopSec - m);
-  }
-  funList[fan].stopSec += sec;
   if (funList[fan].lastWorkDay != funDayId()) {
     funList[fan].lastWorkDay = funDayId();
     funList[fan].lastWorkDaySec = 0;
   }
-  funList[fan].lastWorkDaySec += sec;
+  if (funList[fan].stopSec > ut) {
+    // Кулер работает
+    funList[fan].lastWorkDaySec -= funList[fan].stopSec - ut;
+  }
+  funList[fan].lastWorkDaySec += stopUnixtime - ut;
+
+  funList[fan].stopSec = stopUnixtime;
   if (fan == 0) {
     analogWrite(funList[fan].pin, cfgGetSpeedFan0());
   } else {
     analogWrite(funList[fan].pin, cfgGetSpeedFan1());
   }
 }
+void funStopAll() {
+  funStop(0);
+  funStop(1);
+}
 
 void funStop(byte fan) {
-  unsigned long m = rtcUnixtime();
-  if (funList[fan].stopSec > m) {
-    funList[fan].lastWorkDaySec -= (funList[fan].stopSec - m);
-    funList[fan].stopSec = m;
+  unsigned long ut = rtcUnixtime();
+  if (funList[fan].stopSec > ut) {
+    funList[fan].lastWorkDaySec -= (funList[fan].stopSec - ut);
+    funList[fan].stopSec = ut;
   }
 }
 
@@ -93,12 +104,26 @@ int funRpm(byte fan) {
 }
 
 // Сколько секунд еще работать
-int funSec(byte fan) {
-  unsigned long sec = rtcUnixtime();
-  if (sec > funList[fan].stopSec) {
+int funRunSecMin() {
+  return min(funRunSec(0), funRunSec(1));
+}
+
+// Сколько секунд еще работать
+int funRunSec(byte fan) {
+  unsigned long ut = rtcUnixtime();
+  if (ut > funList[fan].stopSec) {
     return 0;
   }
-  return funList[fan].stopSec - sec;
+  return funList[fan].stopSec - ut;
+}
+
+bool funIsRunAll() {
+  unsigned long ut = rtcUnixtime();
+  return funList[0].stopSec > ut && funList[1].stopSec > ut;
+}
+
+bool funIsRun(byte fan) {
+  return funList[fan].stopSec > rtcUnixtime();
 }
 
 // Скорость вращения вентилятора. 8 символов
@@ -110,14 +135,24 @@ char* funRpmStr(byte fan) {
 
 // Сколько вентилятору еще работать. 5 символов
 char* funSecStr(byte fan) {
-  int val = funSec(fan);
+  int val = funRunSec(fan);
   sprintf(char22, "%02d:%02d\0", val / 60, val % 60);
   char22[5] = '\0';
   return char22;
 }
+// Сколько секунд кулер не работал
+unsigned long funTimeOutOfWorkMax() {
+  return max(funTimeOutOfWork(0), funTimeOutOfWork(1));
+}
 
 // Сколько секунд кулер не работал
-
+unsigned long funTimeOutOfWork(byte b) {
+  unsigned long ut = rtcUnixtime();
+  if (funList[b].stopSec > ut) {
+    return 0ul;
+  }
+  return ut - funList[b].stopSec;
+}
 
 // Последний рабочий день. 10 символов
 char* funLastWorkDayStr(byte fan) {
