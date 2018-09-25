@@ -8,9 +8,9 @@ void infoMenu() {
     t = dhtT(b);
     h = dhtH(b);
     oledPrintByte(b, 0, b + 1, 0);
-    oledPrint(dhtTStr(t), 6 * 2, b + 1, 0);
-    oledPrint(dhtHStr(t), 6 * 12, b + 1, 0);
-    oledPrint(dhtHAStr(t, h), 6 * 16, b + 1, 0);
+    oledPrint(dhtTStr(t), 6 * 3, b + 1, 0);
+    oledPrint(dhtHStr(t), 6 * 11, b + 1, 0);
+    oledPrint(dhtHAStr(t, h), 6 * 15, b + 1, 0);
   }
   for (byte b = 0; b < 2; b++) {
     oledPrint("F\0", 0, 5 + b, 0);
