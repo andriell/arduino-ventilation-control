@@ -32,7 +32,7 @@ char* dhtHStr(float val) {
 char* dhtHAStr(float t, float h) {
   float val = dhtHA(t, h);
   val = constrain(val, 0, 99);
-  sprintf(char22, "%2d.%2dg\0", (int) val, ((int) (val * 100)) % 100);
+  sprintf(char22, "%2d.%02dg\0", (int) val, ((int) (val * 100)) % 100);
   char22[6] = '\0';
   return char22;
 }
