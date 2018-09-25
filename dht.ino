@@ -25,7 +25,7 @@ void dthLoop() {
 // Температура. 7 символов
 char* dhtTStr(float val) {
   val = constrain(val, -99, 99);
-  sprintf(char22, "%+2d.%01d\370C\0", (int) val, ((int) (val * 10)) % 10);
+  sprintf(char22, "%+2d.%01d""\0", (int) val, ((int) (val * 10)) % 10);
   char22[7] = '\0';
   return char22;
 }
@@ -70,8 +70,9 @@ float dhtTOutside() {
 float dhtHOutside() {
   dhtH[1];
 }
-
+// Расчитывает абсолютную влажность
 float dhtHA(float t, float h) {
+  h = h / 100.0;
   if (t < -30) {
     return h * 0.1;
   } else if (t < -20) {
@@ -99,5 +100,13 @@ float dhtHA(float t, float h) {
 float dhtMapFloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+// Какой будет относительная влажность, если температура изменится с t1 до t2
+float dhtHChange(float h, float t1, float t2) {
+  if (t1 == t2) {
+    return h;
+  }
+  return constrain(dhtHA(t1, h) / dhtHA(t2, 100.0) * 100.0, 0.0, 99.0);
 }
 

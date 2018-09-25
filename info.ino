@@ -13,15 +13,10 @@ void infoMenu() {
     oledPrint(dhtHAStr(t, h), 6 * 15, b + 1, 0);
   }
   for (byte b = 0; b < 2; b++) {
-    oledPrint("F\0", 0, 5 + b, 0);
-    oledPrintByte(b + 1, 6, 5 + b, 0);
-    oledPrint(funSecStr(b), 6 * 3, 5 + b, 0);
-    oledPrint(funRpmStr(b), 6 * 13, 5 + b, 0);
+    infoDisplayFanRumInfo(b, 5 + b);
   }
-  
-  oledPrintByte(infoFan + 1, 0, 7, 0);
-  oledPrint(funLastWorkDayStr(infoFan), 6 * 2, 7, 0);
-  oledPrint(funLastWorkDaySecStr(infoFan), 6 * 13, 7, 0);
+
+  infoDisplayFanWorkInfo(infoFan, 7);
 
   if (infoFan == 0) {
     infoFan = 1;
@@ -39,5 +34,18 @@ void infoMenu() {
   if (controlC()) {
     menuOpen(255);
   }
+}
+
+void infoDisplayFanRumInfo(byte fan, byte y) {
+  oledPrint("F\0", 0, y, 0);
+  oledPrintByte(fan + 1, 6, y, 0);
+  oledPrint(funSecStr(fan), 6 * 3, y, 0);
+  oledPrint(funRpmStr(fan), 6 * 13, y, 0);
+}
+
+void infoDisplayFanWorkInfo(byte fan, byte y) {
+  oledPrintByte(fan + 1, 0, y, 0);
+  oledPrint(funLastWorkDayStr(fan), 6 * 2, y, 0);
+  oledPrint(funLastWorkDaySecStr(fan), 6 * 13, y, 0);
 }
 

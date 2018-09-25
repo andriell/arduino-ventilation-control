@@ -4,7 +4,7 @@ iarduino_OLED_txt oledVar(OLED_ADDRESS);
 // ширина символов (6), высота символов (8),
 extern uint8_t SmallFontRus[];
 // ширина символов (12), высота символов (16)
-extern uint8_t MediumFontRus[];
+
 // Предыдущий размер шрифта
 byte oledFSPrev = 255;
 
@@ -13,7 +13,7 @@ void oledSetap() {
   oledFlipDisplay();
   oledVar.setCoding(false);
   oledClean();
-  oledPrint("OLED\0", OLED_C, 4, 1);
+  oledPrint("OLED\0", OLED_C, 4, 0);
 }
 
 void oledFont(byte fs) {
@@ -23,7 +23,7 @@ void oledFont(byte fs) {
   if (fs == 0) {
     oledVar.setFont(SmallFontRus);
   } else if (fs == 1) {
-    oledVar.setFont(MediumFontRus);
+    oledVar.setFont(MediumFont36);
   }
   fs = oledFSPrev;
 }

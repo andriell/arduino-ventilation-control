@@ -11,6 +11,7 @@ char* menuList[] = {
   "\215\240\341\342\340\256\251\252\250\0",
   "\204\240\342\240/\242\340\245\254\357\0",
   "\216\342\347\245\342\0",
+  "\204\240\342\347\250\252\250\0",
 };
 
 
@@ -63,13 +64,15 @@ void menuTitile() {
 
 void menuLoop() {
   if (menuActive == 0) {
-    infoMenu();
+    prog1Menu();
   } else if (menuActive == 1) {
     cfgMenu();
   } else if (menuActive == 2) {
     rtcMenu();
   } else if (menuActive == 3) {
     logMenu();
+  } else if (menuActive == 4) {
+    infoMenu();
   } else {
     menuMenu();
   }
