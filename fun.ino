@@ -1,5 +1,6 @@
 #define FAN1_PIN 5
 #define FAN2_PIN 6
+#define ONE_SECOND 1000000ul
 
 struct FanStruct {
   int pin;
@@ -23,18 +24,23 @@ void fanSetup() {
 }
 
 void fanLoop() {
+  unsigned long m = micros();
   for (byte b = 0; b < 2; b++) {
-    if ((micros() - funList[b].rpmMicros) > ONE_SECOND) {
+    if (funList[b].rpmMicros > m) {
+      funList[b].rpmMicros = m;
+      continue;
+    }
+    if ((m - funList[b].rpmMicros) > ONE_SECOND) {
       funList[b].rpm = 0;
     }
-    if (funList[b].stopSec < micros() / ONE_SECOND) {
+    if (funList[b].stopSec < rtcUnixtime()) {
       analogWrite(funList[b].pin, 0);
     }
   }
 }
 
 void funRun(byte fan, unsigned long sec) {
-  unsigned long m = micros() / ONE_SECOND;
+  unsigned long m = rtcUnixtime();
   if (funList[fan].stopSec < m) {
     funList[fan].stopSec = m;
   }
@@ -55,7 +61,7 @@ void funRun(byte fan, unsigned long sec) {
 }
 
 void funStop(byte fan) {
-  unsigned long m = micros() / ONE_SECOND;
+  unsigned long m = rtcUnixtime();
   if (funList[fan].stopSec > m) {
     funList[fan].lastWorkDaySec -= (funList[fan].stopSec - m);
     funList[fan].stopSec = m;
@@ -63,13 +69,23 @@ void funStop(byte fan) {
 }
 
 void fanSens1() {
-  funList[1].rpm = 60 / ((float) (micros() - funList[1].rpmMicros) / ONE_SECOND);
-  funList[1].rpmMicros = micros();
+  unsigned long m = micros();
+  if (funList[1].rpmMicros > m) {
+    funList[1].rpmMicros = m;
+    return;
+  }
+  funList[1].rpm = 60 / (((float) (m - funList[1].rpmMicros)) / ONE_SECOND);
+  funList[1].rpmMicros = m;
 }
 
 void fanSens2() {
-  funList[1].rpm = 60 / ((float) (micros() - funList[1].rpmMicros) / ONE_SECOND);
-  funList[1].rpmMicros = micros();
+  unsigned long m = micros();
+  if (funList[2].rpmMicros > m) {
+    funList[2].rpmMicros = m;
+    return;
+  }
+  funList[2].rpm = 60 / (((float) (m - funList[2].rpmMicros)) / ONE_SECOND);
+  funList[2].rpmMicros = m;
 }
 
 int funRpm(byte fan) {
@@ -78,7 +94,7 @@ int funRpm(byte fan) {
 
 // Сколько секунд еще работать
 int funSec(byte fan) {
-  unsigned long sec = micros() / ONE_SECOND;
+  unsigned long sec = rtcUnixtime();
   if (sec > funList[fan].stopSec) {
     return 0;
   }
@@ -99,6 +115,9 @@ char* funSecStr(byte fan) {
   char22[5] = '\0';
   return char22;
 }
+
+// Сколько секунд кулер не работал
+
 
 // Последний рабочий день. 10 символов
 char* funLastWorkDayStr(byte fan) {

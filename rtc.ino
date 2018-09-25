@@ -5,6 +5,11 @@ DateTime rtcLastNow;
 
 void rtcSetup() {
   rtcVar.begin();
+  rtcLastNow = rtcVar.now();
+}
+
+void rtcLoop() {
+  rtcLastNow = rtcVar.now();
 }
 
 void rtcMenu() {
@@ -190,10 +195,11 @@ char* rtc02d(int i) {
 }
 
 DateTime rtcNow() {
-  if (micros() - rtcLastNowMicros > ONE_SECOND) {
-    rtcLastNow = rtcVar.now();
-  }
   return rtcLastNow;
+}
+
+unsigned long rtcUnixtime() {
+  return rtcLastNow.unixtime();
 }
 
 // Полная дата. 19 символов

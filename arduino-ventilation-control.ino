@@ -3,8 +3,6 @@
 #include "DHT.h"
 #include "RTClib.h"
 
-#define ONE_SECOND 1000000ul
-
 char char22[22];
 
 void setup() {
@@ -21,4 +19,5 @@ void loop() {
   controlLoop();
   menuLoop();
   fanLoop();
+  prog1Loop();
 }

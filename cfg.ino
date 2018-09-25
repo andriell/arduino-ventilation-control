@@ -13,20 +13,18 @@ CfgMenuStruct cfgMenuElements[] = {
   {2, "Min H (%)\0", "\0", 0, 100, 1, 1},
   {3, "Max H (%)\0", "\0", 0, 100, 1, 1},
   {4, "\207\242\343\252\0", "\0", 0, 1, 1, 1},
-  {5, "\215\240\347 \342\250\345\256\243\256 \340\245\246\250\254\240 (\347)\0", "\0", 0, 23, 1, 1},
-  {6, "\212\256\255 \342\250\345\256\243\256 \340\245\246\250\254\240 (\347)\0", "\0", 0, 23, 1, 1},
-  {7, "Mod: 0-\242\353\252\253, 1-smart\0", "2-\340\240\341\257, 3-smart+\340\240\341\257\0", 0, 3, 1, 1},
-  {8, "\202\353\342\357\246\252\240 \242 00:00 (\254\250\255)\0", "\0", 0, 240, 1, 1},
-  {9, "\202\353\342\357\246\252\240 \242 04:00 (\254\250\255)\0", "\0", 0, 240, 1, 1},
-  {10, "\202\353\342\357\246\252\240 \242 08:00 (\254\250\255)\0", "\0", 0, 240, 1, 1},
-  {11, "\202\353\342\357\246\252\240 \242 12:00 (\254\250\255)\0", "\0", 0, 240, 1, 1},
-  {12, "\202\353\342\357\246\252\240 \242 16:00 (\254\250\255)\0", "\0", 0, 240, 1, 1},
-  {13, "\202\353\342\357\246\252\240 \242 20:00 (\254\250\255)\0", "\0", 0, 240, 1, 1},
-  {14, "\221\252\256\340\256\341\342\354 \242\245\255\342. 1\0", "\0", 0, 255, 1, 5},
-  {15, "\221\252\256\340\256\341\342\354 \242\245\255\342. 2\0", "\0", 0, 255, 1, 5},
+  {5, "\215\240\347 \342\250\345\256\243\256 \340\245\246\250\254\240 (\347)\0", "\0", 0, 1439, 1, 1},
+  {6, "\212\256\255 \342\250\345\256\243\256 \340\245\246\250\254\240 (\347)\0", "\0", 0, 1439, 1, 1},
+  {7, "\215\240\347 \340\240\241 \257\256 \342\245\254\257\0", "\0", 0, 371, 1, 1},
+  {8, "\212\256\255 \340\240\241 \257\256 \342\245\254\257\0", "\0", 0, 371, 1, 1},
+  {9, "\220\240\341\257\250\341\240\255\250\245, \341\343\345\256\245\0", "\242\340\245\254\357\0", 0, 1439, 1, 10},
+  {10, "\220\240\341\257\250\341\240\255\250\245, \250\255\342\245\340\242\240\253\0", "(\244\245\255\354)\0", 1, 10, 1, 1},
+  {11, "\220\240\341\257\250\341\240\255\250\245, \242\340\245\254\357\0", "\340\240\241\256\342\353 (\254\250\255)\0", 0, 3599, 1, 1},
+  {12, "\221\252\256\340\256\341\342\354 \242\245\255\342. 1\0", "\0", 0, 255, 1, 5},
+  {13, "\221\252\256\340\256\341\342\354 \242\245\255\342. 2\0", "\0", 0, 255, 1, 5},
 };
 
-const byte CFG_MENU_ELEMENTS_SIZE = 16;
+const byte CFG_MENU_ELEMENTS_SIZE = 14;
 
 byte cfgAddr2I[CFG_MENU_ELEMENTS_SIZE];
 
@@ -52,16 +50,30 @@ void cfgMenu() {
   if (cfgMenuEnter) {
     oledInvText(true);
   }
+  // Выводим изменяемую величину
   if (current.vDivider > 1) {
+    // float
     float valFloat = ((float) valInt) / current.vDivider;
     oledPrintFloat(valFloat, OLED_C, 3, 1);
   } else if (current.vMin == 0 && current.vMax == 1) {
+    // bool
     if (valInt > 0) {
       oledPrint("\204\240\0", OLED_C, 3, 1);
     } else {
       oledPrint("\215\245\342\0", OLED_C, 3, 1);
     }
+  } else if (current.vMin == 0 && (current.vMax == 3599 || current.vMax == 1439)) {
+    // Часы и минуты или минуты и секунды
+    sprintf(char22, "%02d:%02d\0", valInt / 60, valInt % 60);
+    char22[5] = '\0';
+    oledPrint(char22, OLED_C, 3, 1);
+  } else if (current.vMin == 0 && current.vMax == 371) {
+    // Месяц и день
+    sprintf(char22, "%02d-%02d\0", valInt / 31 + 1, valInt % 31 + 1);
+    char22[5] = '\0';
+    oledPrint(char22, OLED_C, 3, 1);
   } else {
+    // int
     oledPrintInt(valInt, OLED_C, 3, 1);
   }
   oledInvText(false);
@@ -110,13 +122,7 @@ void cfgMenu() {
 int cfgRead(byte addr) {
   int val;
   EEPROM.get(addr * 2, val);
-  if (val < cfgMenuElements[cfgAddr2I[addr]].vMin) {
-    return cfgMenuElements[cfgAddr2I[addr]].vMin;
-  }
-  if (val > cfgMenuElements[cfgAddr2I[addr]].vMax) {
-    return cfgMenuElements[cfgAddr2I[addr]].vMax;
-  }
-  return val;
+  return constrain(val, cfgMenuElements[cfgAddr2I[addr]].vMin, cfgMenuElements[cfgAddr2I[addr]].vMax);
 }
 
 float cfgReadFloat(byte addr) {
@@ -149,37 +155,32 @@ float cfgGetMaxH() {
 int cfgGetSound() {
   return cfgRead(4);
 }
-int cfgGetSoundStart() {
+int cfgGetSoundStartHM() {
   return cfgRead(5);
 }
-int cfgGetSoundEnd() {
+int cfgGetSoundEndHM() {
   return cfgRead(6);
 }
-int cfgGetMod() {
+int cfgGetTModStartMD() {
   return cfgRead(7);
 }
-int cfgGetRun00() {
+int cfgGetTModEndMD() {
   return cfgRead(8);
 }
-int cfgGetRun04() {
+int cfgGetDryTimeHM() {
   return cfgRead(9);
 }
-int cfgGetRun08() {
+int cfgGetDryTimeIntervalDay() {
   return cfgRead(10);
 }
-int cfgGetRun12() {
-  return cfgRead(11);
-}
-int cfgGetRun16() {
-  return cfgRead(12);
-}
-int cfgGetRun20() {
-  return cfgRead(13);
+int cfgGetDryTimeRunTimeMS() {
+  return cfgRead(10);
 }
 int cfgGetSpeedFan0() {
-  return cfgRead(14);
+  return cfgRead(12);
 }
 int cfgGetSpeedFan1() {
-  return cfgRead(15);
+  return cfgRead(13);
 }
+
 
