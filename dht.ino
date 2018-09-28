@@ -24,15 +24,21 @@ void dthLoop() {
 
 // Температура. 7 символов
 char* dhtTStr(float val) {
-  val = constrain(val, -99, 99);
-  sprintf(char22, "%+2d.%01d\370C\0", (int) val, ((int) (val * 10)) % 10);
+  if (isnan(val)) {
+    val = 0.0;
+  }
+  val = constrain(val, -99.0, 99.0);
+  sprintf(char22, "%+2d.%01d\370C\0", (int) val, ((int) (val * 10.0)) % 10);
   char22[7] = '\0';
   return char22;
 }
 
 // Влажность. 3 символа
 char* dhtHStr(float val) {
-  val = constrain(val, 0, 99);
+  if (isnan(val)) {
+    val = 0.0;
+  }
+  val = constrain(val, 0.0, 99.0);
   sprintf(char22, "%2d%%\0", (int) round(val));
   char22[3] = '\0';
   return char22;
@@ -40,9 +46,15 @@ char* dhtHStr(float val) {
 
 // Абсолютная влажность. 6 символов
 char* dhtHAStr(float t, float h) {
+  if (isnan(t)) {
+    t = 0.0;
+  }
+  if (isnan(h)) {
+    h = 0.0;
+  }
   float val = dhtHA(t, h);
-  val = constrain(val, 0, 99);
-  sprintf(char22, "%2d.%02dg\0", (int) val, ((int) (val * 100)) % 100);
+  val = constrain(val, 0.0, 99.0);
+  sprintf(char22, "%2d.%02dg\0", (int) val, ((int) (val * 100.0)) % 100);
   char22[6] = '\0';
   return char22;
 }
@@ -73,28 +85,28 @@ float dhtHOutside() {
 // Расчитывает абсолютную влажность
 float dhtHA(float t, float h) {
   h = h / 100.0;
-  if (t < -30) {
+  if (t < -30.0) {
     return h * 0.1;
-  } else if (t < -20) {
-    return h * dhtMapFloat(t, -30, -20, 0.29, 0.81);
-  } else if (t < -10) {
-    return h * dhtMapFloat(t, -20, -10, 0.81, 2.1);
-  } else if (t < 0) {
-    return h * dhtMapFloat(t, -10, 0, 2.1, 4.8);
-  } else if (t < 10) {
-    return h * dhtMapFloat(t, 0, 10, 4.8, 9.4);
-  } else if (t < 20) {
-    return h * dhtMapFloat(t, 10, 20, 9.4, 17.3);
-  } else if (t < 30) {
-    return h * dhtMapFloat(t, 20, 30, 17.3, 30.4);
-  } else if (t < 40) {
-    return h * dhtMapFloat(t, 30, 40, 30.4, 51.1);
-  } else if (t < 50) {
-    return h * dhtMapFloat(t, 40, 50, 51.1, 83);
-  } else if (t < 60) {
-    return h * dhtMapFloat(t, 50, 60, 83, 130);
+  } else if (t < -20.0) {
+    return h * dhtMapFloat(t, -30.0, -20.0, 0.29, 0.81);
+  } else if (t < -10.0) {
+    return h * dhtMapFloat(t, -20.0, -10.0, 0.81, 2.1);
+  } else if (t < 0.0) {
+    return h * dhtMapFloat(t, -10.0, 0.0, 2.1, 4.8);
+  } else if (t < 10.0) {
+    return h * dhtMapFloat(t, 0.0, 10.0, 4.8, 9.4);
+  } else if (t < 20.0) {
+    return h * dhtMapFloat(t, 10.0, 20.0, 9.4, 17.3);
+  } else if (t < 30.0) {
+    return h * dhtMapFloat(t, 20.0, 30.0, 17.3, 30.4);
+  } else if (t < 40.0) {
+    return h * dhtMapFloat(t, 30.0, 40.0, 30.4, 51.1);
+  } else if (t < 50.0) {
+    return h * dhtMapFloat(t, 40.0, 50.0, 51.1, 83.0);
+  } else if (t < 60.0) {
+    return h * dhtMapFloat(t, 50.0, 60.0, 83.0, 130.0);
   }
-  return 99;
+  return 99.0;
 }
 
 float dhtMapFloat(float x, float in_min, float in_max, float out_min, float out_max)

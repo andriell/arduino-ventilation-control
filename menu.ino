@@ -1,7 +1,7 @@
 const byte MENU_SIZE = 5;
 
 byte menuSelected = 0;
-byte menuActive = 255;
+byte menuActive = 0;
 
 
 

@@ -23,7 +23,7 @@ void prog1Loop() {
     bitSet(prog1State, 7);
     funRunAll(cfgGetDryTimeRunTimeS() + rtcUnixtime());
   }
-  if ((dhtTOutside() == 0.0 && dhtHOutside() == 0.0) || (dhtTCellar() == 0.0 && dhtHCellar() == 0.0)) {
+  if (isnan(dhtTOutside()) || isnan(dhtHOutside()) || isnan(dhtTCellar()) || isnan(dhtHCellar())) {
     // Нет показаний с оного из датчиков
     return;
   }
