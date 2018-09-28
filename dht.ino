@@ -25,7 +25,15 @@ void dthLoop() {
 // Температура. 7 символов
 char* dhtTStr(float val) {
   if (isnan(val)) {
-    val = 0.0;
+    char22[0] = ' ';
+    char22[1] = ' ';
+    char22[2] = '-';
+    char22[3] = '.';
+    char22[4] = '-';
+    char22[5] = '\370';
+    char22[6] = 'C';
+    char22[7] = '\0';
+    return char22;
   }
   val = constrain(val, -99.0, 99.0);
   sprintf(char22, "%+2d.%01d\370C\0", (int) val, ((int) (val * 10.0)) % 10);
@@ -36,7 +44,11 @@ char* dhtTStr(float val) {
 // Влажность. 3 символа
 char* dhtHStr(float val) {
   if (isnan(val)) {
-    val = 0.0;
+    char22[0] = '-';
+    char22[1] = '-';
+    char22[2] = '%';
+    char22[3] = '\0';
+    return char22;
   }
   val = constrain(val, 0.0, 99.0);
   sprintf(char22, "%2d%%\0", (int) round(val));
@@ -46,11 +58,15 @@ char* dhtHStr(float val) {
 
 // Абсолютная влажность. 6 символов
 char* dhtHAStr(float t, float h) {
-  if (isnan(t)) {
-    t = 0.0;
-  }
-  if (isnan(h)) {
-    h = 0.0;
+  if (isnan(t) || isnan(h)) {
+    char22[0] = ' ';
+    char22[1] = '-';
+    char22[2] = '.';
+    char22[3] = '-';
+    char22[4] = '-';
+    char22[5] = 'g';
+    char22[6] = '\0';
+    return char22;
   }
   float val = dhtHA(t, h);
   val = constrain(val, 0.0, 99.0);
