@@ -86,7 +86,18 @@ void funStop(byte fan) {
 }
 
 void fanSens1() {
-  //Serial.println("fanSens1");
+  Serial.println("fanSens1");
+  unsigned long m = micros();
+  if (funList[0].rpmMicros > m) {
+    funList[0].rpmMicros = m;
+    return;
+  }
+  funList[0].rpm = 60 / (((float) (m - funList[0].rpmMicros)) / ONE_SECOND);
+  funList[0].rpmMicros = m;
+}
+
+void fanSens2() {
+  Serial.println("fanSens2");
   unsigned long m = micros();
   if (funList[1].rpmMicros > m) {
     funList[1].rpmMicros = m;
@@ -94,17 +105,6 @@ void fanSens1() {
   }
   funList[1].rpm = 60 / (((float) (m - funList[1].rpmMicros)) / ONE_SECOND);
   funList[1].rpmMicros = m;
-}
-
-void fanSens2() {
-  //Serial.println("fanSens2");
-  unsigned long m = micros();
-  if (funList[2].rpmMicros > m) {
-    funList[2].rpmMicros = m;
-    return;
-  }
-  funList[2].rpm = 60 / (((float) (m - funList[2].rpmMicros)) / ONE_SECOND);
-  funList[2].rpmMicros = m;
 }
 
 int funRpm(byte fan) {

@@ -1,4 +1,3 @@
-byte infoFan = 0;
 
 void infoMenu() {
   oledPrint(rtcStr(), 0, 0, 0);
@@ -13,15 +12,8 @@ void infoMenu() {
     oledPrint(dhtHAStr(t, h), 6 * 15, b + 1, 0);
   }
   for (byte b = 0; b < 2; b++) {
-    infoDisplayFanRumInfo(b, 5 + b);
-  }
-
-  infoDisplayFanWorkInfo(infoFan, 7);
-
-  if (infoFan == 0) {
-    infoFan = 1;
-  } else {
-    infoFan = 0;
+    infoDisplayFanRumInfo(b, 4 + b);
+    infoDisplayFanWorkInfo(b, 6 + b);
   }
 
   // Контроль

@@ -1,9 +1,9 @@
-const byte DHT_SIZE = 4;
+const byte DHT_SIZE = 2;
 DHT dhtVar[] = {
   DHT(4, DHT22),
   DHT(7, DHT22),
-  DHT(8, DHT22),
-  DHT(12, DHT22),
+  //DHT(8, DHT22),
+  //DHT(12, DHT22),
 };
 
 float dhtTVal[4] = {0, 0, 0, 0};
@@ -56,19 +56,19 @@ float dhtH(byte b) {
 }
 
 float dhtTCellar() {
-  dhtTVal[0];
+  return dhtTVal[0];
 }
 
 float dhtHCellar() {
-  dhtHVal[0];
+  return dhtHVal[0];
 }
 
 float dhtTOutside() {
-  dhtT[1];
+  return dhtTVal[1];
 }
 
 float dhtHOutside() {
-  dhtH[1];
+  return dhtHVal[1];
 }
 // Расчитывает абсолютную влажность
 float dhtHA(float t, float h) {
