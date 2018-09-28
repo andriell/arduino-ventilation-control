@@ -1,12 +1,13 @@
-const int BUZZER_PIN = 10;
+#define BUZZER_PIN 10
 
 void beepSetup() {
   pinMode(BUZZER_PIN, OUTPUT);
-  //tone(BUZZER_PIN, 2000, 100);
 }
 
 void beep(unsigned int frequency) {
-  if (cfgGetSound() > 0) {
+  DateTime now = rtcNow();
+  int nowHM = now.hour() * 60 + now.minute();
+  if (cfgGetSound() > 0 && !rtcBetweenSerially(nowHM, cfgGetSoundStartHM(), cfgGetSoundEndHM())) {
     tone(BUZZER_PIN, frequency, 100);
   }
 }

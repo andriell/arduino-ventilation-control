@@ -210,3 +210,11 @@ char* rtcStr() {
   return char22;
 }
 
+// Проверяет располагается ли циклическая величина v в интервале от vMin до vMax включая концы
+bool rtcBetweenSerially(int v, int vMin, int vMax) {
+  if (vMin <= vMax) {
+    return vMin <= v && v <= vMax;
+  }
+  return vMin <= v || v <= vMax;
+}
+

@@ -32,6 +32,9 @@ void fanSetup() {
 void fanLoop() {
   unsigned long m = micros();
   for (byte b = 0; b < 2; b++) {
+    if (funRunSec(b) > 5ul && funRpm(b) < 1000) {
+      beep(1000);
+    }
     if (funList[b].rpmMicros > m) {
       funList[b].rpmMicros = m;
       continue;

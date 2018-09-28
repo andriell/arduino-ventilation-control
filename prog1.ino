@@ -6,14 +6,28 @@
 // | Кулер включался | 4           | 5         | 6                       | 7          |
 //
 byte prog1State = 0;
-byte prog1MenuLine6 = 0;
-byte prog1MenuLine7 = 0;
+byte prog1MenuLine = 0;
+unsigned long prog1MenuLineUnixtime = 0ul;
 
 void prog1Loop() {
   DateTime now = rtcNow();
   int nowMD = (now.month() - 1) * 31 + now.day() - 1;
   int nowHM = now.hour() * 60 + now.minute();
-  if (prog1BetweenSerially(nowMD, cfgGetTModStartMD(), cfgGetTModEndMD())) {
+
+  bitSet(prog1State, 3);
+  if (cfgGetDryTimeHM() == nowHM && funTimeOutOfWorkMax() >= cfgGetDryTimeIntervalDay() * 86400ul - 7200ul) {
+    // Работа по расписанию
+    bitClear(prog1State, 4);
+    bitClear(prog1State, 5);
+    bitClear(prog1State, 6);
+    bitSet(prog1State, 7);
+    funRunAll(cfgGetDryTimeRunTimeS() + rtcUnixtime());
+  }
+  if ((dhtTOutside() == 0.0 && dhtHOutside() == 0.0) || (dhtTCellar() == 0.0 && dhtHCellar() == 0.0)) {
+    // Нет показаний с оного из датчиков
+    return;
+  }
+  if (rtcBetweenSerially(nowMD, cfgGetTModStartMD(), cfgGetTModEndMD())) {
     // Работа по температуре
     bitSet(prog1State, 0);
     bitClear(prog1State, 1);
@@ -25,7 +39,7 @@ void prog1Loop() {
       bitClear(prog1State, 7);
       funRunAll(60ul + rtcUnixtime());
     }
-  } else if (prog1BetweenSerially(nowMD, cfgGetHModStartMD(), cfgGetHModEndMD())) {
+  } else if (rtcBetweenSerially(nowMD, cfgGetHModStartMD(), cfgGetHModEndMD())) {
     // Работа по влажности
     bitClear(prog1State, 0);
     bitSet(prog1State, 1);
@@ -49,15 +63,6 @@ void prog1Loop() {
       bitClear(prog1State, 7);
       funRunAll(60ul + rtcUnixtime());
     }
-  }
-  bitSet(prog1State, 3);
-  if (cfgGetDryTimeHM() == nowHM && funTimeOutOfWorkMax() >= cfgGetDryTimeIntervalDay() * 86400ul - 7200ul) {
-    // Работа по расписанию
-    bitClear(prog1State, 4);
-    bitClear(prog1State, 5);
-    bitClear(prog1State, 6);
-    bitSet(prog1State, 7);
-    funRunAll(cfgGetDryTimeRunTimeS() + rtcUnixtime());
   }
 }
 
@@ -84,8 +89,15 @@ void prog1Menu() {
   oledInvText(false);
 
   // Строка 6
+  if (prog1MenuLineUnixtime <= rtcUnixtime()) {
+    prog1MenuLine++;
+    if (prog1MenuLine > 3) {
+      prog1MenuLine = 0;
+    }
+    prog1MenuLineUnixtime = rtcUnixtime() + cfgGetRotationSec();
+  }
   oledPrint("           \0", 0, 7, 1);
-  if (prog1MenuLine6 == 0) {
+  if (prog1MenuLine == 0) {
     if (bitRead(prog1State, 0)) {
       if (bitRead(prog1State, 4)) {
         oledInvText(true);
@@ -114,52 +126,44 @@ void prog1Menu() {
       oledPrint("SC\0", 17 * 6, 6, 0);
       oledInvText(false);
     }
-  } else if (prog1MenuLine6 == 1) {
+  } else if (prog1MenuLine == 1) {
     oledPrint(dhtTStr(dhtTOutside()), 6, 6, 0);
     prog1DisplyProcess();
     oledPrint(dhtTStr(dhtTCellar()), 6 * 13, 6, 0);
-  } else if (prog1MenuLine6 == 2) {
+  } else if (prog1MenuLine == 2) {
     oledPrint(dhtHStr(dhtHOutside()), 6 * 3, 6, 0);
     prog1DisplyProcess();
     oledPrint(dhtHStr(dhtHCellar()), 6 * 15, 6, 0);
-  } else if (prog1MenuLine6 == 3) {
+  } else if (prog1MenuLine == 3) {
     oledPrint(dhtHAStr(dhtTOutside(), dhtHOutside()), 6, 6, 0);
     prog1DisplyProcess();
     oledPrint(dhtHAStr(dhtTCellar(), dhtHCellar()), 6 * 14, 6, 0);
   }
-  prog1MenuLine6++;
-  if (prog1MenuLine6 > 3) {
-    prog1MenuLine6 = 0;
-  }
 
   // Строка 7
-  if (prog1MenuLine7 == 0) {
+  if (prog1MenuLine == 0) {
     infoDisplayFanRumInfo(0, 7);
-  } else if (prog1MenuLine7 == 1) {
+  } else if (prog1MenuLine == 1) {
     infoDisplayFanWorkInfo(0, 7);
-  } else if (prog1MenuLine7 == 2) {
+  } else if (prog1MenuLine == 2) {
     infoDisplayFanRumInfo(1, 7);
-  } else if (prog1MenuLine7 == 3) {
+  } else if (prog1MenuLine == 3) {
     infoDisplayFanWorkInfo(1, 7);
-  }
-  prog1MenuLine7++;
-  if (prog1MenuLine7 > 3) {
-    prog1MenuLine7 = 0;
   }
 
   // Контроль
+  if (controlE() || controlP()) {
+    runOpenMenu();
+  }
+  if (controlM()) {
+    funStopAll();
+  }
   if (controlC()) {
     menuOpen(255);
   }
+  
 }
 
-// Проверяет располагается ли циклическая величина v в интервале от vMin до vMax включая концы
-bool prog1BetweenSerially(int v, int vMin, int vMax) {
-  if (vMin <= vMax) {
-    return vMin <= v && v <= vMax;
-  }
-  return vMin <= v || v <= vMax;
-}
 // Нужно ли включать вентиляцию
 bool prog1NeedRun(float v, float vMin, float vMax, float vOutside) {
   if (vMin <= v && v <= vMax) {

@@ -75,8 +75,14 @@ void menuLoop() {
     logMenu();
   } else if (menuActive == 4) {
     infoMenu();
+  } else if (menuActive == 5) {
+    runMenu();
   } else {
     menuMenu();
   }
+}
+
+byte menuGetActive() {
+  return menuActive;
 }
 
