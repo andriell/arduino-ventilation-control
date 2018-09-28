@@ -67,9 +67,9 @@ void funRun(byte fan, unsigned long stopUnixtime) {
 
   funList[fan].stopSec = stopUnixtime;
   if (fan == 0) {
-    analogWrite(funList[fan].pin, cfgGetSpeedFan0());
+    digitalWrite(funList[fan].pin, HIGH);
   } else {
-    analogWrite(funList[fan].pin, cfgGetSpeedFan1());
+    digitalWrite(funList[fan].pin, HIGH);
   }
 }
 void funStopAll() {
@@ -86,7 +86,7 @@ void funStop(byte fan) {
 }
 
 void fanSens1() {
-  Serial.println("fanSens1");
+  //Serial.println("fanSens1");
   unsigned long m = micros();
   if (funList[0].rpmMicros > m) {
     funList[0].rpmMicros = m;
@@ -97,7 +97,7 @@ void fanSens1() {
 }
 
 void fanSens2() {
-  Serial.println("fanSens2");
+  //Serial.println("fanSens2");
   unsigned long m = micros();
   if (funList[1].rpmMicros > m) {
     funList[1].rpmMicros = m;
