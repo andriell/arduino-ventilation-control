@@ -95,8 +95,8 @@ void prog1Menu() {
       prog1MenuLine = 0;
     }
     prog1MenuLineUnixtime = rtcUnixtime() + cfgGetRotationSec();
+    oledPrint("           \0", 0, 7, 1);
   }
-  oledPrint("           \0", 0, 7, 1);
   if (prog1MenuLine == 0) {
     if (bitRead(prog1State, 0)) {
       if (bitRead(prog1State, 4)) {
@@ -161,7 +161,6 @@ void prog1Menu() {
   if (controlC()) {
     menuOpen(255);
   }
-  
 }
 
 // Нужно ли включать вентиляцию
