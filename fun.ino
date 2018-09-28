@@ -1,3 +1,5 @@
+#define FAN1_PIN_HZ 2
+#define FAN2_PIN_HZ 3
 #define FAN1_PIN 5
 #define FAN2_PIN 6
 #define ONE_SECOND 1000000ul
@@ -19,8 +21,12 @@ FanStruct funList[] = {
 void fanSetup() {
   pinMode(FAN1_PIN, OUTPUT);
   pinMode(FAN2_PIN, OUTPUT);
-  attachInterrupt(0, fanSens1, RISING);
-  attachInterrupt(1, fanSens2, RISING);
+  analogWrite(FAN1_PIN, 0);
+  analogWrite(FAN2_PIN, 0);
+  pinMode(FAN1_PIN_HZ, INPUT_PULLUP);
+  pinMode(FAN2_PIN_HZ, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(FAN1_PIN_HZ), fanSens1, RISING);
+  attachInterrupt(digitalPinToInterrupt(FAN2_PIN_HZ), fanSens2, RISING);
 }
 
 void fanLoop() {
@@ -80,6 +86,7 @@ void funStop(byte fan) {
 }
 
 void fanSens1() {
+  //Serial.println("fanSens1");
   unsigned long m = micros();
   if (funList[1].rpmMicros > m) {
     funList[1].rpmMicros = m;
@@ -90,6 +97,7 @@ void fanSens1() {
 }
 
 void fanSens2() {
+  //Serial.println("fanSens2");
   unsigned long m = micros();
   if (funList[2].rpmMicros > m) {
     funList[2].rpmMicros = m;

@@ -1,4 +1,4 @@
-const byte MENU_SIZE = 4;
+const byte MENU_SIZE = 5;
 
 byte menuSelected = 0;
 byte menuActive = 255;
@@ -27,7 +27,7 @@ void menuMenu() {
     prev = menuSelected - 1;
     next = menuSelected + 1;
   }
-  oledPrint(menuList[prev], OLED_C, 0, 0);
+  oledPrint(menuList[prev], OLED_C, 1, 0);
   oledInvText(true);
   oledPrint(menuList[menuSelected], OLED_C, 3, 0);
   oledInvText(false);

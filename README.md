@@ -6,12 +6,12 @@ RJ45
 | - | ------------ | --------- |
 | 1 | white-orange | Fan1 Hz   |
 | 2 | orange       | Fan2 Hz   |
-| 3 | white-green  | +5V       |
+| 3 | white-green  | +12V      |
 | 4 | blue         | DHT22 1   |
 | 5 | white-blue   | DHT22 2   |
 | 6 | green        | GND       |
-| 7 | white-brown  | Fan1 +12V |
-| 8 | brown        | Fan2 +12V |
+| 7 | white-brown  | Fan1 GND  |
+| 8 | brown        | Fan2 GND  |
 
 Arduino nano
 

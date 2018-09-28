@@ -11,6 +11,7 @@ void setup() {
   rtcSetup();
   beepSetup();
   controlSetup();
+  fanSetup();
   oledSetap();
   delay(200);
   oledClean();

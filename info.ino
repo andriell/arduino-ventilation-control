@@ -26,7 +26,7 @@ void infoMenu() {
 
   // Контроль
   if (controlP()) {
-    funRunAll(60);
+    funRunAll(60ul + rtcUnixtime());
   }
   if (controlM()) {
     funStopAll();

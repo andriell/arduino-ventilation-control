@@ -12,7 +12,7 @@ void oledSetap() {
   oledVar.begin();
   oledFlipDisplay();
   oledVar.setCoding(false);
-  oledClean();
+  oledVar.clrScr();
   oledPrint("OLED\0", OLED_C, 4, 0);
 }
 

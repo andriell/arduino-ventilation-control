@@ -23,7 +23,7 @@ void prog1Loop() {
       bitClear(prog1State, 5);
       bitClear(prog1State, 6);
       bitClear(prog1State, 7);
-      funRunAll(60);
+      funRunAll(60ul + rtcUnixtime());
     }
   } else if (prog1BetweenSerially(nowMD, cfgGetHModStartMD(), cfgGetHModEndMD())) {
     // Работа по влажности
@@ -67,8 +67,7 @@ void prog1Menu() {
   oledPrint(rtcWStr(), 19 * 6, 0, 0);
 
   oledPrint(dhtTStr(dhtTCellar()), 0, 3, 1);
-  oledPrint(" \0", 12 * 6, 3, 1);
-  oledPrint(dhtHStr(dhtHCellar()), 12 * 7, 3, 1);
+  oledPrint(dhtHStr(dhtHCellar()), 92, 3, 1);
 
   // Строка 5
   oledPrint(dhtTStr(dhtTCellar()), 0, 5, 0);
@@ -85,6 +84,7 @@ void prog1Menu() {
   oledInvText(false);
 
   // Строка 6
+  oledPrint("           \0", 0, 7, 1);
   if (prog1MenuLine6 == 0) {
     if (bitRead(prog1State, 0)) {
       if (bitRead(prog1State, 4)) {
@@ -146,6 +146,11 @@ void prog1Menu() {
   if (prog1MenuLine7 > 3) {
     prog1MenuLine7 = 0;
   }
+
+  // Контроль
+  if (controlC()) {
+    menuOpen(255);
+  }
 }
 
 // Проверяет располагается ли циклическая величина v в интервале от vMin до vMax включая концы
@@ -181,9 +186,9 @@ float prog1ResultantT() {
 
 void prog1DisplyProcess() {
   if (funIsRunAll()) {
-    oledPrint(">>>\0", 9 * 6, 3, 0);
+    oledPrint(">>>\0", 9 * 6, 6, 0);
   } else {
-    oledPrint("|||\0", 9 * 6, 3, 0);
+    oledPrint("|||\0", 9 * 6, 6, 0);
   }
 }
 
