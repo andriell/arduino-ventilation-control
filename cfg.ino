@@ -26,7 +26,7 @@ CfgMenuStruct cfgMenuElements[] = {
   //{15, "\221\252\256\340\256\341\342\354 \242\245\255\342. 2\0", "\0", 0, 255, 1, 5},
 };
 
-const byte CFG_MENU_ELEMENTS_SIZE = 16;
+const byte CFG_MENU_ELEMENTS_SIZE = 14;
 
 byte cfgAddr2I[CFG_MENU_ELEMENTS_SIZE];
 
