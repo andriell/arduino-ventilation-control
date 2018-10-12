@@ -1,6 +1,7 @@
 #define CFG_MD 371
 #define CFG_HM 1439
 #define CFG_MS 3599
+#define CFG_B16 15
 
 struct CfgMenuStruct {
   byte vAddr;
@@ -12,10 +13,9 @@ struct CfgMenuStruct {
   int vStep;
 };
 
-const byte CFG_MENU_ELEMENTS_SIZE = 15;
+const byte CFG_MENU_ELEMENTS_SIZE = 16;
 
 byte cfgAddr2I[CFG_MENU_ELEMENTS_SIZE];
-
 
 CfgMenuStruct cfgMenuElements[] = {
   {0, "Min T (C\370)\0", "\0", 0, 25, 1, 1},
@@ -33,7 +33,7 @@ CfgMenuStruct cfgMenuElements[] = {
   {12, "\220\240\341\257\250\341\240\255\250\245, \250\255\342\245\340\242\240\253\0", "(\244\245\255\354)\0", 1, 10, 1, 1},
   {13, "\220\240\341\257\250\341\240\255\250\245, \242\340\245\254\357\0", "\340\240\241\256\342\353 (\341\245\252)\0", 0, CFG_MS, 1, 30},
   {14, "\217\245\340\245\252\253\356\347\245\255\250\357 \254\245\255\356\0", "(\341\245\252)\0", 1, 10, 1, 1},
-  //{15, "\221\252\256\340\256\341\342\354 \242\245\255\342. 2\0", "\0", 0, 255, 1, 5},
+  {15, "\220\245\246\250\254 \340\240\241\256\342\353\0", "TE HU TE+HU SC\0", 0, CFG_B16, 1, 1},
 };
 
 void cfgSetup() {
@@ -70,16 +70,18 @@ void cfgMenu() {
     } else {
       oledPrint("-\0", OLED_C, 3, 1);
     }
-  } else if (current.vMin == 0 && (current.vMax == CFG_MS || current.vMax == CFG_HM)) {
-    // Часы и минуты или минуты и секунды
-    sprintf(char22, "%02d:%02d\0", valInt / 60, valInt % 60);
-    char22[5] = '\0';
-    oledPrint(char22, OLED_C, 3, 1);
+  } else if (current.vMin == 0 && current.vMax == CFG_HM) {
+    // Часы и минуты
+    oledPrint(strHM(valInt), OLED_C, 3, 1);
+  } else if (current.vMin == 0 && current.vMax == CFG_MS) {
+    // Минуты и секунды
+    oledPrint(strMS(valInt), OLED_C, 3, 1);
   } else if (current.vMin == 0 && current.vMax == CFG_MD) {
     // Месяц и день
-    sprintf(char22, "%02d-%02d\0", valInt / 31 + 1, valInt % 31 + 1);
-    char22[5] = '\0';
-    oledPrint(char22, OLED_C, 3, 1);
+    oledPrint(strID(valInt), OLED_C, 3, 1);
+  } else if (current.vMin == 0 && current.vMax == CFG_B16) {
+    // Byte
+    oledPrint(strB4(valInt), OLED_C, 3, 1);
   } else {
     // int
     oledPrintInt(valInt, OLED_C, 3, 1);
@@ -193,4 +195,6 @@ int cfgGetDryTimeRunTimeS() {
 int cfgGetRotationSec() {
   return cfgRead(14);
 }
-
+int cfgMod() {
+  return cfgRead(15);
+}

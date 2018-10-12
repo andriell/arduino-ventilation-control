@@ -3,10 +3,8 @@
 #include "DHT.h"
 #include "RTClib.h"
 
-char char22[22];
-
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   cfgSetup();
   rtcSetup();
   beepSetup();
@@ -22,6 +20,6 @@ void loop() {
   controlLoop();
   dthLoop();
   fanLoop();
-  prog1Loop();
+  modLoop();
   menuLoop();
 }

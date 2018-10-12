@@ -26,34 +26,34 @@ void rtcMenu() {
   if (rtcInsertI == 2) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.month()), 60, 2, 1);
+  oledPrint(str02d(now.month()), 60, 2, 1);
   oledInvText(false);
   oledPrint("-\0", 84, 2, 1);
 
   if (rtcInsertI == 3) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.day()), 96, 2, 1);
+  oledPrint(str02d(now.day()), 96, 2, 1);
   oledInvText(false);
 
   if (rtcInsertI == 4) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.hour()), 0, 5, 1);
+  oledPrint(str02d(now.hour()), 0, 5, 1);
   oledInvText(false);
   oledPrint(":\0", 24, 4, 1);
 
   if (rtcInsertI == 5) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.minute()), 36, 5, 1);
+  oledPrint(str02d(now.minute()), 36, 5, 1);
   oledInvText(false);
   oledPrint(":\0", 60, 4, 1);
 
   if (rtcInsertI == 6) {
     oledInvText(true);
   }
-  oledPrint(rtc02d(now.second()), 72, 5, 1);
+  oledPrint(str02d(now.second()), 72, 5, 1);
   oledInvText(false);
 
   if (rtcInsertI == 7) {
@@ -187,27 +187,12 @@ char* rtcWStr() {
   return "\0";
 }
 
-// 2 символа
-char* rtc02d(int i) {
-  sprintf(char22, "%02d\0", i);
-  char22[2] = '\0';
-  return char22;
-}
-
 DateTime rtcNow() {
   return rtcLastNow;
 }
 
 unsigned long rtcUnixtime() {
   return rtcLastNow.unixtime();
-}
-
-// Полная дата. 19 символов
-char* rtcStr() {
-  DateTime now = rtcNow();
-  sprintf(char22, "%04d-%02d-%02d %02d:%02d:%02d\0", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
-  char22[19] = '\0';
-  return char22;
 }
 
 // Проверяет располагается ли циклическая величина v в интервале от vMin до vMax включая концы
