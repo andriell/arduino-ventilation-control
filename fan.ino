@@ -42,13 +42,13 @@ void fanLoop() {
     fanRpmCount = 0ul;
   }
   //Serial.println(fanRpm);
-  
-  if (!fanIsRun()) {
+  byte runFanId = fanRunId();
+  if (runFanId == 0) {
     analogWrite(FAN_IN_PIN, LOW);
     analogWrite(FAN_OUT_PIN, LOW);
     return;
   }
-  if (fanIsIn()) {
+  if (runFanId == 1 xor cfgFanInOut()) {
     digitalWrite(FAN_IN_PIN, HIGH);
     analogWrite(FAN_OUT_PIN, LOW);
   } else {
@@ -59,10 +59,10 @@ void fanLoop() {
     beep(1000);
   }
 }
-
-bool fanIsIn() {
-  if (fanMode == 1) {
-    return true;
+// Номер включенного вентилятора. 0 - все выключено, 1 - in, 2 - out
+byte fanRunId() {
+  if (!fanIsRun()) {
+    return 0;
   }
   if (fanMode == 0) {
     // Serial.print(" ");
@@ -74,9 +74,11 @@ bool fanIsIn() {
     // Serial.print(" ");
     // Serial.print((((int) fanRunSec()) / cfgFanRotationTime()) % 2);
     // Serial.println();
-    return (((int) fanRunSec()) / cfgFanRotationTime()) % 2 == 0;
+    return (((int) fanRunSec()) / cfgFanRotationTime()) % 2 == 0 ? 1 : 2;
+  } else if (fanMode == 1) {
+    return 1;
   }
-  return false;
+  return 2;
 }
 
 

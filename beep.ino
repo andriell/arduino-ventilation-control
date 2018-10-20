@@ -7,7 +7,7 @@ void beepSetup() {
 void beep(unsigned int frequency) {
   DateTime now = rtcNow();
   int nowHM = now.hour() * 60 + now.minute();
-  if (cfgGetSound() > 0 && !rtcBetweenSerially(nowHM, cfgGetSoundStartHM(), cfgGetSoundEndHM())) {
+  if (cfgGetSound() && !rtcBetweenSerially(nowHM, cfgGetSoundStartHM(), cfgGetSoundEndHM())) {
     tone(BUZZER_PIN, frequency, 100);
   }
 }

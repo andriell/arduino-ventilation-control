@@ -32,18 +32,30 @@ float dhtH(byte b) {
 }
 
 float dhtTCellar() {
-  return dhtTVal[0];
-}
-
-float dhtHCellar() {
-  return dhtHVal[0];
-}
-
-float dhtTOutside() {
+  if (cfgDhtInOut()) {
+    return dhtTVal[0];
+  }
   return dhtTVal[1];
 }
 
+float dhtHCellar() {
+  if (cfgDhtInOut()) {
+    return dhtHVal[0];
+  }
+  return dhtHVal[1];
+}
+
+float dhtTOutside() {
+  if (cfgDhtInOut()) {
+    return dhtTVal[1];
+  }
+  return dhtTVal[0];
+}
+
 float dhtHOutside() {
+  if (cfgDhtInOut()) {
+    return dhtHVal[1];
+  }
   return dhtHVal[1];
 }
 // Расчитывает абсолютную влажность

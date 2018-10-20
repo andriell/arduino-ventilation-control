@@ -13,7 +13,7 @@ struct CfgMenuStruct {
   int vStep;
 };
 
-const byte CFG_MENU_ELEMENTS_SIZE = 17;
+const byte CFG_MENU_ELEMENTS_SIZE = 19;
 
 byte cfgAddr2I[CFG_MENU_ELEMENTS_SIZE];
 
@@ -35,6 +35,8 @@ CfgMenuStruct cfgMenuElements[] = {
   {14, "\217\245\340\245\252\253\356\347\245\255\250\357 \254\245\255\356\0", "(\341\245\252)\0", 1, 10, 1, 1},
   {15, "\220\245\246\250\254 \340\240\241\256\342\353\0", "TE HU TE+HU SC\0", 0, CFG_B16, 1, 1},
   {16, "\202\340\245\254\357 \257\245\340\245\252\253\356\347\245\255\250\357\0", "\242\245\255\342\250\253\357\342\256\340\256\242\0", 60, CFG_MS, 1, 30},
+  {17, "\222\245\340\254\256\254\245\342\340 In/Out\0", "\0", 0, 1, 1, 1},
+  {18, "\202\245\255\342\250\253\357\342\256\340 In/Out\0", "\0", 0, 1, 1, 1},
 };
 
 void cfgSetup() {
@@ -163,8 +165,8 @@ float cfgGetMinH() {
 float cfgGetMaxH() {
   return cfgReadFloat(3);
 }
-int cfgGetSound() {
-  return cfgRead(4);
+bool cfgGetSound() {
+  return cfgRead(4) == 1;
 }
 int cfgGetSoundStartHM() {
   return cfgRead(5);
@@ -201,5 +203,11 @@ int cfgMod() {
 }
 int cfgFanRotationTime() {
   return cfgRead(16);
+}
+bool cfgDhtInOut() {
+  return cfgRead(17) == 1;
+}
+bool cfgFanInOut() {
+  return cfgRead(18) == 1;
 }
 

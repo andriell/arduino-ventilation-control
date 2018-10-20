@@ -91,9 +91,10 @@ float prog1ResultantT() {
 }
 
 void prog1DisplyProcess() {
-  if (!fanIsRun()) {
+  byte runFanId = fanRunId();
+  if (runFanId == 0) {
     oledPrint("|||\0", 9 * 6, 6, 0);
-  } else if (fanIsIn()) {
+  } else if (runFanId == 1) {
     oledPrint(">>>\0", 9 * 6, 6, 0);
   } else {
     oledPrint("<<<\0", 9 * 6, 6, 0);
