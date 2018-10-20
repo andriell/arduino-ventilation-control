@@ -71,13 +71,13 @@ void cfgMenu() {
     } else {
       oledPrint("-\0", OLED_C, 3, 1);
     }
-  } else if (current.vMin == 0 && current.vMax == CFG_HM) {
+  } else if (current.vMax == CFG_HM) {
     // Часы и минуты
     oledPrint(strHM(valInt), OLED_C, 3, 1);
-  } else if (current.vMin == 0 && current.vMax == CFG_MS) {
+  } else if (current.vMax == CFG_MS) {
     // Минуты и секунды
     oledPrint(strMS(valInt), OLED_C, 3, 1);
-  } else if (current.vMin == 0 && current.vMax == CFG_MD) {
+  } else if (current.vMax == CFG_MD) {
     // Месяц и день
     oledPrint(strID(valInt), OLED_C, 3, 1);
   } else if (current.vMin == 0 && current.vMax == CFG_B16) {
