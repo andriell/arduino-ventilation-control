@@ -10,8 +10,8 @@ void prog1Menu() {
   oledPrint(strH(dhtHCellar()), 92, 3, 1);
 
   // Строка 5
-  oledPrint(strT(dhtTCellar()), 0, 5, 0);
-  oledPrint(strH(dhtHCellar()), 6 * 8, 5, 0);
+  oledPrint(strT(dhtTOutside()), 0, 5, 0);
+  oledPrint(strH(dhtHOutside()), 6 * 8, 5, 0);
   if (fanIsRun()) {
     oledInvText(true);
   }
