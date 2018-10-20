@@ -13,7 +13,7 @@ void oledSetap() {
   oledFlipDisplay();
   oledVar.setCoding(false);
   oledVar.clrScr();
-  oledPrint("OLED\0", OLED_C, 3, 0);
+  oledPrint("OLED 1.0\0", OLED_C, 3, 0);
 }
 
 void oledFont(byte fs) {

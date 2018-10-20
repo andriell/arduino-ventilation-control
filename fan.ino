@@ -1,157 +1,137 @@
-#define FAN1_PIN_HZ 2
-#define FAN2_PIN_HZ 3
-#define FAN1_PIN 5
-#define FAN2_PIN 6
+#define FAN_IN_PIN_HZ 2
+#define FAN_OUT_PIN_HZ 3
+#define FAN_IN_PIN 5
+#define FAN_OUT_PIN 6
 #define ONE_SECOND 1000000ul
 
-struct FanStruct {
-  int pin;
-  unsigned long stopSec;
-  unsigned long rpmMicros;
-  unsigned long rpmCount;
-  long rpm;
-  unsigned long lastWorkDay;
-  unsigned long lastWorkDaySec;
-};
-
-FanStruct fanList[] = {
-  {FAN1_PIN, 0, 0, 0, 0, 0},
-  {FAN2_PIN, 0, 0, 0, 0, 0},
-};
+unsigned long fanStopSec;
+byte fanMode = 0; // 0 - попеременно, 1 - in, 2 - out
+unsigned long fanRpmMicros;
+unsigned long fanRpmCount;
+unsigned long fanRpm;
+unsigned long fanLastWorkDay;
+unsigned long fanLastWorkDaySec;
 
 void fanSetup() {
-  pinMode(FAN1_PIN, OUTPUT);
-  pinMode(FAN2_PIN, OUTPUT);
-  analogWrite(FAN1_PIN, 0);
-  analogWrite(FAN2_PIN, 0);
-  pinMode(FAN1_PIN_HZ, INPUT_PULLUP);
-  pinMode(FAN2_PIN_HZ, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(FAN1_PIN_HZ), fanSens1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(FAN2_PIN_HZ), fanSens2, FALLING);
+  pinMode(FAN_IN_PIN, OUTPUT);
+  pinMode(FAN_OUT_PIN, OUTPUT);
+  analogWrite(FAN_IN_PIN, 0);
+  analogWrite(FAN_OUT_PIN, 0);
+  pinMode(FAN_IN_PIN_HZ, INPUT_PULLUP);
+  pinMode(FAN_OUT_PIN_HZ, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(FAN_IN_PIN_HZ), fanSens, FALLING);
+  attachInterrupt(digitalPinToInterrupt(FAN_OUT_PIN_HZ), fanSens, FALLING);
 }
 
 void fanLoop() {
   unsigned long m = micros();
-  for (byte b = 0; b < 2; b++) {
-    if (fanList[b].rpmMicros > m) {
-      fanList[b].rpmMicros = m;
-      continue;
-    }
-    //Serial.print(fanList[b].rpmCount);
-    //Serial.print('/');
-    //Serial.print(m - fanList[b].rpmMicros);
-    //Serial.print('=');
-    if (fanList[b].rpmCount == 0) {
-      fanList[b].rpm = 0;
-    } else {
-      fanList[b].rpm = ((float) fanList[b].rpmCount) / (((float)(m - fanList[b].rpmMicros)) / 3.0E+7);
-      fanList[b].rpmMicros = m;
-      fanList[b].rpmCount = 0ul;
-    }
-    //Serial.println(fanList[b].rpm);
-    if (fanRunSec(b) > 5ul && fanRpm(b) < 1000) {
-      beep(1000);
-    }
-    if (fanList[b].stopSec < rtcUnixtime()) {
-      analogWrite(fanList[b].pin, 0);
-    }
+  if (fanRpmMicros > m) {
+    fanRpmMicros = m;
+    return;
   }
-}
-
-void fanRunAll(unsigned long stopUnixtime) {
-  fanRun(0, stopUnixtime);
-  fanRun(1, stopUnixtime);
-}
-
-void fanRun(byte fan, unsigned long stopUnixtime) {
-  unsigned long ut = rtcUnixtime();
-  if (fanList[fan].lastWorkDay != fanDayId()) {
-    fanList[fan].lastWorkDay = fanDayId();
-    fanList[fan].lastWorkDaySec = 0;
-  }
-  if (fanList[fan].stopSec > ut) {
-    // Кулер работает
-    fanList[fan].lastWorkDaySec -= fanList[fan].stopSec - ut;
-  }
-  fanList[fan].lastWorkDaySec += stopUnixtime - ut;
-
-  fanList[fan].stopSec = stopUnixtime;
-  if (fan == 0) {
-    digitalWrite(fanList[fan].pin, HIGH);
+  //Serial.print(fanRpmCount);
+  //Serial.print('/');
+  //Serial.print(m - fanRpmMicros);
+  //Serial.print('=');
+  if (fanRpmCount == 0) {
+    fanRpm = 0;
   } else {
-    digitalWrite(fanList[fan].pin, HIGH);
+    fanRpm = ((float) fanRpmCount) / (((float)(m - fanRpmMicros)) / 3.0E+7);
+    fanRpmMicros = m;
+    fanRpmCount = 0ul;
+  }
+  //Serial.println(fanRpm);
+  
+  if (!fanIsRun()) {
+    analogWrite(FAN_IN_PIN, LOW);
+    analogWrite(FAN_OUT_PIN, LOW);
+    return;
+  }
+  if (fanIsIn()) {
+    digitalWrite(FAN_IN_PIN, HIGH);
+  } else {
+    digitalWrite(FAN_IN_PIN, HIGH);
+  }
+  if (fanRunSec() > 5ul && fanRpm < 1000) {
+    beep(1000);
   }
 }
-void fanStopAll() {
-  fanStop(0);
-  fanStop(1);
+
+bool fanIsIn() {
+  if (fanMode == 1) {
+    return true;
+  }
+  if (fanMode == 0) {
+    unsigned long ut = rtcUnixtime();
+    if (fanStopSec < ut) {
+      return true;
+    }
+    return (((int) (fanStopSec - ut)) / cfgFanRotationTime()) % 2 == 0;
+  }
+  return false;
 }
 
-void fanStop(byte fan) {
+
+void fanRun(unsigned long stopUnixtime, byte mode) {
+  fanMode = mode;
   unsigned long ut = rtcUnixtime();
-  if (fanList[fan].stopSec > ut) {
-    fanList[fan].lastWorkDaySec -= (fanList[fan].stopSec - ut);
-    fanList[fan].stopSec = ut;
+  if (fanLastWorkDay != fanDayId()) {
+    fanLastWorkDay = fanDayId();
+    fanLastWorkDaySec = 0;
+  }
+  if (fanIsRun()) {
+    // Кулер работает
+    fanLastWorkDaySec -= fanStopSec - ut;
+  }
+  fanLastWorkDaySec += stopUnixtime - ut;
+
+  fanStopSec = stopUnixtime;
+}
+
+void fanStop() {
+  unsigned long ut = rtcUnixtime();
+  if (fanIsRun()) {
+    fanLastWorkDaySec -= (fanStopSec - ut);
+    fanStopSec = ut;
   }
 }
 
-void fanSens1() {
-  //Serial.println("fanSens1");
-  fanList[0].rpmCount++;
+void fanSens() {
+  //Serial.println("fanSens");
+  fanRpmCount++;
 }
 
-void fanSens2() {
-  //Serial.println("fanSens2");
-  fanList[1].rpmCount++;
+long fanGetRpm() {
+  return fanRpm;
 }
 
-long fanRpm(byte fan) {
-  return fanList[fan].rpm;
+unsigned long fanGetLastWorkDay() {
+  return fanLastWorkDay;
 }
 
-unsigned long fanLastWorkDay(byte fan) {
-  return fanList[fan].lastWorkDay;
-}
-
-unsigned long fanLastWorkDaySec(byte fan) {
-  return fanList[fan].lastWorkDaySec;
+unsigned long fanGetLastWorkDaySec() {
+  return fanLastWorkDaySec;
 }
 
 // Сколько секунд еще работать
-unsigned long fanRunSecMin() {
-  return min(fanRunSec(0), fanRunSec(1));
-}
-
-// Сколько секунд еще работать
-unsigned long fanRunSec(byte fan) {
-  unsigned long ut = rtcUnixtime();
-  if (ut > fanList[fan].stopSec) {
-    return 0ul;
+unsigned long fanRunSec() {
+  if (fanIsRun()) {
+    return fanStopSec - rtcUnixtime();
   }
-  return fanList[fan].stopSec - ut;
-}
-
-bool fanIsRunAll() {
-  unsigned long ut = rtcUnixtime();
-  return fanList[0].stopSec > ut && fanList[1].stopSec > ut;
-}
-
-bool fanIsRun(byte fan) {
-  return fanList[fan].stopSec > rtcUnixtime();
+  return 0ul;
 }
 
 // Сколько секунд кулер не работал
-unsigned long fanTimeOutOfWorkMax() {
-  return max(fanTimeOutOfWork(0), fanTimeOutOfWork(1));
-}
-
-// Сколько секунд кулер не работал
-unsigned long fanTimeOutOfWork(byte b) {
-  unsigned long ut = rtcUnixtime();
-  if (fanList[b].stopSec > ut) {
+unsigned long fanTimeOutOfWork() {
+  if (fanIsRun()) {
     return 0ul;
   }
-  return ut - fanList[b].stopSec;
+  return rtcUnixtime() - fanStopSec;
+}
+
+
+bool fanIsRun() {
+  return fanStopSec > rtcUnixtime();
 }
 
 // Уникальный идентификатор дня в календаре начиная с 2000 года

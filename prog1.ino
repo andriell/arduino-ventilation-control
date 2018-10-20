@@ -12,15 +12,10 @@ void prog1Menu() {
   // Строка 5
   oledPrint(strT(dhtTCellar()), 0, 5, 0);
   oledPrint(strH(dhtHCellar()), 6 * 8, 5, 0);
-  if (fanIsRun(0)) {
+  if (fanIsRun()) {
     oledInvText(true);
   }
-  oledPrint("F1\0", 16 * 6, 5, 0);
-  oledInvText(false);
-  if (fanIsRun(1)) {
-    oledInvText(true);
-  }
-  oledPrint("F2\0", 19 * 6, 5, 0);
+  oledPrint(strFan(), 19 * 6, 5, 0);
   oledInvText(false);
 
   // Строка 6
@@ -50,13 +45,13 @@ void prog1Menu() {
 
   // Строка 7
   if (prog1MenuLine == 0) {
-    infoDisplayFanRumInfo(0, 7);
+    infoDisplayFanRumInfo(7);
   } else if (prog1MenuLine == 1) {
-    infoDisplayFanWorkInfo(0, 7);
+    infoDisplayFanWorkInfo(7);
   } else if (prog1MenuLine == 2) {
-    infoDisplayFanRumInfo(1, 7);
+    infoDisplayFanRumInfo(7);
   } else if (prog1MenuLine == 3) {
-    infoDisplayFanWorkInfo(1, 7);
+    infoDisplayFanWorkInfo(7);
   }
 
   // Контроль
@@ -64,7 +59,7 @@ void prog1Menu() {
     runOpenMenu();
   }
   if (controlM()) {
-    fanStopAll();
+    fanStop();
   }
   if (controlC()) {
     menuOpen(255);
@@ -96,7 +91,7 @@ float prog1ResultantT() {
 }
 
 void prog1DisplyProcess() {
-  if (fanIsRunAll()) {
+  if (fanIsRun()) {
     oledPrint(">>>\0", 9 * 6, 6, 0);
   } else {
     oledPrint("|||\0", 9 * 6, 6, 0);

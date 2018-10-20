@@ -13,7 +13,7 @@ struct CfgMenuStruct {
   int vStep;
 };
 
-const byte CFG_MENU_ELEMENTS_SIZE = 16;
+const byte CFG_MENU_ELEMENTS_SIZE = 17;
 
 byte cfgAddr2I[CFG_MENU_ELEMENTS_SIZE];
 
@@ -34,6 +34,7 @@ CfgMenuStruct cfgMenuElements[] = {
   {13, "\220\240\341\257\250\341\240\255\250\245, \242\340\245\254\357\0", "\340\240\241\256\342\353 (\341\245\252)\0", 0, CFG_MS, 1, 30},
   {14, "\217\245\340\245\252\253\356\347\245\255\250\357 \254\245\255\356\0", "(\341\245\252)\0", 1, 10, 1, 1},
   {15, "\220\245\246\250\254 \340\240\241\256\342\353\0", "TE HU TE+HU SC\0", 0, CFG_B16, 1, 1},
+  {16, "\202\340\245\254\357 \257\245\340\245\252\253\356\347\245\255\250\357\0", "\242\245\255\342\250\253\357\342\256\340\256\242\0", 60, CFG_MS, 1, 30},
 };
 
 void cfgSetup() {
@@ -198,3 +199,7 @@ int cfgGetRotationSec() {
 int cfgMod() {
   return cfgRead(15);
 }
+int cfgFanRotationTime() {
+  return cfgRead(16);
+}
+

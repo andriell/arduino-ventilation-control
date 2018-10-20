@@ -12,33 +12,29 @@ void infoMenu() {
     oledPrint(strHA(t, h), 6 * 15, b + 1, 0);
   }
   modDisplay(3);
-  for (byte b = 0; b < 2; b++) {
-    infoDisplayFanRumInfo(b, 4 + b);
-    infoDisplayFanWorkInfo(b, 6 + b);
-  }
+  infoDisplayFanRumInfo(4);
+  infoDisplayFanWorkInfo(5);
 
   // Контроль
   if (controlE() || controlP()) {
     runOpenMenu();
   }
   if (controlM()) {
-    fanStopAll();
+    fanStop();
   }
   if (controlC()) {
     menuOpen(255);
   }
 }
 
-void infoDisplayFanRumInfo(byte fan, byte y) {
-  oledPrint("F\0", 0, y, 0);
-  oledPrintByte(fan + 1, 6, y, 0);
-  oledPrint(strHMS(fanRunSec(fan)), 6 * 3, y, 0);
-  oledPrint(strFanRpm(fan), 6 * 13, y, 0);
+void infoDisplayFanRumInfo(byte y) {
+  oledPrint(strFan(), 0, y, 0);
+  oledPrint(strHMS(fanRunSec()), 6 * 3, y, 0);
+  oledPrint(strFanRpm(), 6 * 13, y, 0);
 }
 
-void infoDisplayFanWorkInfo(byte fan, byte y) {
-  oledPrintByte(fan + 1, 0, y, 0);
-  oledPrint(strFanLastWorkDay(fan), 6 * 2, y, 0);
-  oledPrint(strHMS(fanLastWorkDaySec(fan)), 6 * 13, y, 0);
+void infoDisplayFanWorkInfo(byte y) {
+  oledPrint(strFanLastWorkDay(), 0, y, 0);
+  oledPrint(strHMS(fanGetLastWorkDaySec()), 6 * 13, y, 0);
 }
 

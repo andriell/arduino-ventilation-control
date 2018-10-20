@@ -113,8 +113,8 @@ char* strDate() {
 }
 
 // Последний рабочий день. 10 символов
-char* strFanLastWorkDay(byte fan) {
-  unsigned long lastWorkDay = fanLastWorkDay(fan);
+char* strFanLastWorkDay() {
+  unsigned long lastWorkDay = fanGetLastWorkDay();
   int y = lastWorkDay / 10000ul;
   int m = (lastWorkDay - y * 10000ul) / 100;
   int d = lastWorkDay - y * 10000ul - m * 100;
@@ -124,9 +124,21 @@ char* strFanLastWorkDay(byte fan) {
 }
 
 // Скорость вращения вентилятора. 8 символов
-char* strFanRpm(byte fan) {
-  sprintf(strChar22, "%5drpm\0", fanRpm(fan));
+char* strFanRpm() {
+  sprintf(strChar22, "%5drpm\0", fanGetRpm());
   strChar22[8] = '\0';
+  return strChar22;
+}
+
+// Какой это кулер in или out. 2 символа
+char* strFan() {
+  strChar22[0] = 'F';
+  if (fanIsIn()) {
+    strChar22[1] = 'I';
+  } else {
+    strChar22[1] = 'O';
+  }
+  strChar22[2] = '\0';
   return strChar22;
 }
 

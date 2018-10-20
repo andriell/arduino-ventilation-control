@@ -17,7 +17,7 @@ void runMenu() {
   // Контроль
   if (controlC() || controlE() || rtcUnixtime() >= runCloseUnixtime) {
     menuOpen(runReturnMenu);
-    fanRunAll(((unsigned long)runMin) * 60ul + rtcUnixtime());
+    fanRun(((unsigned long)runMin) * 60ul + rtcUnixtime(), 0);
   }
   if (controlP()) {
     oledClean();
