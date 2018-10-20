@@ -5,6 +5,7 @@
 #define ONE_SECOND 1000000ul
 
 unsigned long fanStopSec;
+unsigned long fanStartSec;
 byte fanMode = 0; // 0 - попеременно, 1 - in, 2 - out
 unsigned long fanRpmMicros;
 unsigned long fanRpmCount;
@@ -49,10 +50,12 @@ void fanLoop() {
   }
   if (fanIsIn()) {
     digitalWrite(FAN_IN_PIN, HIGH);
+    analogWrite(FAN_OUT_PIN, LOW);
   } else {
-    digitalWrite(FAN_IN_PIN, HIGH);
+    analogWrite(FAN_IN_PIN, LOW);
+    digitalWrite(FAN_OUT_PIN, HIGH);
   }
-  if (fanRunSec() > 5ul && fanRpm < 1000) {
+  if (fanRunDirectionSec() > 5 && fanRpm < 1000) {
     beep(1000);
   }
 }
@@ -62,11 +65,16 @@ bool fanIsIn() {
     return true;
   }
   if (fanMode == 0) {
-    unsigned long ut = rtcUnixtime();
-    if (fanStopSec < ut) {
-      return true;
-    }
-    return (((int) (fanStopSec - ut)) / cfgFanRotationTime()) % 2 == 0;
+    // Serial.print(" ");
+    // Serial.print((int) fanRunSec());
+    // Serial.print(" ");
+    // Serial.print(cfgFanRotationTime());
+    // Serial.print(" ");
+    // Serial.print(((int) fanRunSec()) / cfgFanRotationTime());
+    // Serial.print(" ");
+    // Serial.print((((int) fanRunSec()) / cfgFanRotationTime()) % 2);
+    // Serial.println();
+    return (((int) fanRunSec()) / cfgFanRotationTime()) % 2 == 0;
   }
   return false;
 }
@@ -82,6 +90,8 @@ void fanRun(unsigned long stopUnixtime, byte mode) {
   if (fanIsRun()) {
     // Кулер работает
     fanLastWorkDaySec -= fanStopSec - ut;
+  } else {
+    fanStartSec = ut;
   }
   fanLastWorkDaySec += stopUnixtime - ut;
 
@@ -89,8 +99,8 @@ void fanRun(unsigned long stopUnixtime, byte mode) {
 }
 
 void fanStop() {
-  unsigned long ut = rtcUnixtime();
   if (fanIsRun()) {
+    unsigned long ut = rtcUnixtime();
     fanLastWorkDaySec -= (fanStopSec - ut);
     fanStopSec = ut;
   }
@@ -114,11 +124,34 @@ unsigned long fanGetLastWorkDaySec() {
 }
 
 // Сколько секунд еще работать
-unsigned long fanRunSec() {
+unsigned long fanSecToStop() {
   if (fanIsRun()) {
     return fanStopSec - rtcUnixtime();
   }
   return 0ul;
+}
+// Сколько секунд уже работает
+unsigned long fanRunSec() {
+  if (!fanIsRun()) {
+    return 0ul;
+  }
+  unsigned long ut = rtcUnixtime();
+  if (ut < fanStartSec) {
+    return 0ul;
+  }
+  return ut - fanStartSec;
+}
+
+// Сколько секунд уже работает в этом направлении
+int fanRunDirectionSec() {
+  if (fanMode != 0) {
+    return (int) fanRunSec();
+  }
+  int runSec = (int) fanRunSec();
+  if (runSec <= 0) {
+    return 0;
+  }
+  return runSec - (runSec / cfgFanRotationTime()) * cfgFanRotationTime();
 }
 
 // Сколько секунд кулер не работал

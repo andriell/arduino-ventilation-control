@@ -28,19 +28,19 @@ void modLoop() {
   if (bitRead(modState, 0) && rtcBetweenSerially(nowMD, cfgGetTModStartMD(), cfgGetTModEndMD())) {
     // Работа по температуре
     bitSet(modState, 4);
-    if (fanRunSec() < 10 && prog1NeedRun(dhtTCellar(), cfgGetMinT(), cfgGetMaxT(), dhtTOutside())) {
+    if (fanSecToStop() < 10 && prog1NeedRun(dhtTCellar(), cfgGetMinT(), cfgGetMaxT(), dhtTOutside())) {
       fanRun(60ul + rtcUnixtime(), 0);
     }
   } else if (bitRead(modState, 1) && rtcBetweenSerially(nowMD, cfgGetHModStartMD(), cfgGetHModEndMD())) {
     // Работа по влажности
     bitSet(modState, 5);
-    if (fanRunSec() < 10 && prog1NeedRun(dhtHCellar(), cfgGetMinH(), cfgGetMaxH(), dhtHChange(dhtHOutside(), dhtTOutside(), prog1ResultantT()))) {
+    if (fanSecToStop() < 10 && prog1NeedRun(dhtHCellar(), cfgGetMinH(), cfgGetMaxH(), dhtHChange(dhtHOutside(), dhtTOutside(), prog1ResultantT()))) {
       fanRun(60ul + rtcUnixtime(), 0);
     }
   } else if (bitRead(modState, 2)) {
     // Работа по температуре и по влажности
     bitSet(modState, 6);
-    if (fanRunSec() < 10 && prog1NeedRun(dhtTCellar(), cfgGetMinT(), cfgGetMaxT(), dhtTOutside()) && prog1NeedRun(dhtHCellar(), cfgGetMinH(), cfgGetMaxH(), dhtHChange(dhtHOutside(), dhtTOutside(), prog1ResultantT()))) {
+    if (fanSecToStop() < 10 && prog1NeedRun(dhtTCellar(), cfgGetMinT(), cfgGetMaxT(), dhtTOutside()) && prog1NeedRun(dhtHCellar(), cfgGetMinH(), cfgGetMaxH(), dhtHChange(dhtHOutside(), dhtTOutside(), prog1ResultantT()))) {
       fanRun(60ul + rtcUnixtime(), 0);
     }
   }

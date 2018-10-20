@@ -29,7 +29,7 @@ void infoMenu() {
 
 void infoDisplayFanRumInfo(byte y) {
   oledPrint(strFan(), 0, y, 0);
-  oledPrint(strHMS(fanRunSec()), 6 * 3, y, 0);
+  oledPrint(strHMS(fanSecToStop()), 6 * 3, y, 0);
   oledPrint(strFanRpm(), 6 * 13, y, 0);
 }
 

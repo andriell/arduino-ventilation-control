@@ -91,10 +91,12 @@ float prog1ResultantT() {
 }
 
 void prog1DisplyProcess() {
-  if (fanIsRun()) {
+  if (!fanIsRun()) {
+    oledPrint("|||\0", 9 * 6, 6, 0);
+  } else if (fanIsIn()) {
     oledPrint(">>>\0", 9 * 6, 6, 0);
   } else {
-    oledPrint("|||\0", 9 * 6, 6, 0);
+    oledPrint("<<<\0", 9 * 6, 6, 0);
   }
 }
 

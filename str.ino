@@ -133,7 +133,9 @@ char* strFanRpm() {
 // Какой это кулер in или out. 2 символа
 char* strFan() {
   strChar22[0] = 'F';
-  if (fanIsIn()) {
+  if (!fanIsRun()) {
+    strChar22[1] = 'X';
+  } else if (fanIsIn()) {
     strChar22[1] = 'I';
   } else {
     strChar22[1] = 'O';
