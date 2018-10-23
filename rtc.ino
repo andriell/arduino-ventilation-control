@@ -195,6 +195,22 @@ unsigned long rtcUnixtime() {
   return rtcLastNow.unixtime();
 }
 
+// Час и минута как int
+int rtcHm() {
+  return rtcLastNow.hour() * 60 + rtcLastNow.minute();
+}
+
+// Месяц и день как int
+int rtcMd() {
+  return (rtcLastNow.month() - 1) * 31 + rtcLastNow.day() - 1;
+}
+
+// Уникальный идентификатор дня в календаре начиная с 2000 года
+unsigned long rtcDayId() {
+  return ((unsigned long) rtcLastNow.year()) * 10000ul  + ((unsigned long) rtcLastNow.month()) * 100ul + ((unsigned long) rtcLastNow.day());
+}
+
+
 // Проверяет располагается ли циклическая величина v в интервале от vMin до vMax включая концы
 bool rtcBetweenSerially(int v, int vMin, int vMax) {
   if (vMin <= vMax) {

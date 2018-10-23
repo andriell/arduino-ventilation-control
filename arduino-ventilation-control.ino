@@ -21,5 +21,6 @@ void loop() {
   dthLoop();
   fanLoop();
   modLoop();
+  logLoop();
   menuLoop();
 }

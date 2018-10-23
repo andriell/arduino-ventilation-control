@@ -3,23 +3,25 @@
 // |                 | Температура | Влажность | Температура + Влажность | Расписание |
 // | --------------- | ----------- | --------- | ----------------------- | ---------- |
 // | Доступно конфиг | 0           | 1         | 2                       | 3          |
-// | Доступно сейчас | 4           | 5         | 6                       | 7          |
+// | Доступно сейчас | 4           | 5         | 6*                      | 7*         |
 //
 int modState = 0;
 
 void modLoop() {
   DateTime now = rtcNow();
-  int nowMD = (now.month() - 1) * 31 + now.day() - 1;
-  int nowHM = now.hour() * 60 + now.minute();
+  int nowMD = rtcMd();
+  int nowHM = rtcHm();
   modState = cfgMod();
   //Serial.println();
   //Serial.print(modState);
   //Serial.print(' ');
   //Serial.print(modState, BIN);
-  if (bitRead(modState, 3) && cfgGetDryTimeHM() == nowHM && fanTimeOutOfWork() >= cfgGetDryTimeIntervalDay() * 86400ul - 7200ul) {
+  if (bitRead(modState, 3)) {
     // Работа по расписанию
     bitSet(modState, 7);
-    fanRun(cfgGetDryTimeRunTimeS() + rtcUnixtime(), 0);
+    if (cfgGetDryTimeHM() == nowHM && fanTimeOutOfWork() >= cfgGetDryTimeIntervalDay() * 86400ul - 7200ul) {
+      fanRun(cfgGetDryTimeRunTimeS() + rtcUnixtime(), 0);
+    }
   }
   if (isnan(dhtTOutside()) || isnan(dhtHOutside()) || isnan(dhtTCellar()) || isnan(dhtHCellar())) {
     // Нет показаний с оного из датчиков
@@ -31,13 +33,15 @@ void modLoop() {
     if (fanSecToStop() < 10 && prog1NeedRun(dhtTCellar(), cfgGetMinT(), cfgGetMaxT(), dhtTOutside())) {
       fanRun(60ul + rtcUnixtime(), 0);
     }
-  } else if (bitRead(modState, 1) && rtcBetweenSerially(nowMD, cfgGetHModStartMD(), cfgGetHModEndMD())) {
+  }
+  if (bitRead(modState, 1) && rtcBetweenSerially(nowMD, cfgGetHModStartMD(), cfgGetHModEndMD())) {
     // Работа по влажности
     bitSet(modState, 5);
     if (fanSecToStop() < 10 && prog1NeedRun(dhtHCellar(), cfgGetMinH(), cfgGetMaxH(), dhtHChange(dhtHOutside(), dhtTOutside(), prog1ResultantT()))) {
       fanRun(60ul + rtcUnixtime(), 0);
     }
-  } else if (bitRead(modState, 2)) {
+  }
+  if (bitRead(modState, 2)) {
     // Работа по температуре и по влажности
     bitSet(modState, 6);
     if (fanSecToStop() < 10 && prog1NeedRun(dhtTCellar(), cfgGetMinT(), cfgGetMaxT(), dhtTOutside()) && prog1NeedRun(dhtHCellar(), cfgGetMinH(), cfgGetMaxH(), dhtHChange(dhtHOutside(), dhtTOutside(), prog1ResultantT()))) {

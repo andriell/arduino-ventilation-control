@@ -67,10 +67,8 @@ void prog1Menu() {
 }
 
 // Нужно ли включать вентиляцию
+// Это нужно делать, только если величина вышла за диапазон, а величина с наружи может вернуть ее в диапазон
 bool prog1NeedRun(float v, float vMin, float vMax, float vOutside) {
-  if (vMin <= v && v <= vMax) {
-    return true;
-  }
   if (v < vMin && vOutside > vMin) {
     return true;
   }

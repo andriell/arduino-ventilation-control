@@ -85,8 +85,8 @@ byte fanRunId() {
 void fanRun(unsigned long stopUnixtime, byte mode) {
   fanMode = mode;
   unsigned long ut = rtcUnixtime();
-  if (fanLastWorkDay != fanDayId()) {
-    fanLastWorkDay = fanDayId();
+  if (fanLastWorkDay != rtcDayId()) {
+    fanLastWorkDay = rtcDayId();
     fanLastWorkDaySec = 0;
   }
   if (fanIsRun()) {
@@ -164,14 +164,7 @@ unsigned long fanTimeOutOfWork() {
   return rtcUnixtime() - fanStopSec;
 }
 
-
 bool fanIsRun() {
   return fanStopSec > rtcUnixtime();
-}
-
-// Уникальный идентификатор дня в календаре начиная с 2000 года
-unsigned long fanDayId() {
-  DateTime now = rtcNow();
-  return ((unsigned long) now.year()) * 10000ul  + ((unsigned long) now.month()) * 100ul + ((unsigned long) now.day());
 }
 

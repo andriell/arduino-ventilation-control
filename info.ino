@@ -2,15 +2,13 @@
 void infoMenu() {
   oledPrint(strDate(), 0, 0, 0);
   oledPrint(rtcWStr(), 19 * 6, 0, 0);
-  float t, h;
-  for (byte b = 0; b < DHT_SIZE; b++) {
-    t = dhtT(b);
-    h = dhtH(b);
-    oledPrintByte(b, 0, b + 1, 0);
-    oledPrint(strT(t), 6 * 3, b + 1, 0);
-    oledPrint(strH(t), 6 * 11, b + 1, 0);
-    oledPrint(strHA(t, h), 6 * 15, b + 1, 0);
-  }
+
+  oledPrint("In\0", 0, 1, 0);
+  infoDisplayTHHa(1, dhtTCellar(), dhtHCellar());
+  
+  oledPrint("Out\0", 0, 2, 0);
+  infoDisplayTHHa(2, dhtTOutside(), dhtHOutside());
+  
   modDisplay(3);
   infoDisplayFanRumInfo(4);
   infoDisplayFanWorkInfo(5);
@@ -25,6 +23,12 @@ void infoMenu() {
   if (controlC()) {
     menuOpen(255);
   }
+}
+
+void infoDisplayTHHa(byte y, float t, float h) {
+  oledPrint(strT(t), 6 * 3, y, 0);
+  oledPrint(strH(h), 6 * 11, y, 0);
+  oledPrint(strHA(t, h), 6 * 15, y, 0);
 }
 
 void infoDisplayFanRumInfo(byte y) {
