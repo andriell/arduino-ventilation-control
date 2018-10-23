@@ -53,7 +53,7 @@ void logMenu() {
   logDisplay(false, true,  todayHa,     2);
   logDisplay(true,  false, yesterdayT,  4);
   logDisplay(false, false, yesterdayHa, 6);
-  
+
   if (controlC()) {
     menuOpen(255);
   }
