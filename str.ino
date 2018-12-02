@@ -14,7 +14,7 @@ char* strT(float val) {
     return strChar22;
   }
   val = constrain(val, -99.0, 99.0);
-  sprintf(strChar22, "%+2d.%01d\370C\0", (int) val, ((int) (val * 10.0)) % 10);
+  sprintf(strChar22, "%+2d.%01d\370C\0", (int) val, ((int) (abs(val) * 10.0)) % 10);
   strChar22[7] = '\0';
   return strChar22;
 }
